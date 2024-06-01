@@ -1,6 +1,10 @@
 import streamlit as st
 import pyodbc
 import pandas as pd
+<<<<<<< HEAD
+=======
+
+>>>>>>> 198caaa9c9d0835c6df254b15530c22317ad7024
 
 st.set_page_config(
     page_title = 'Data Page',
@@ -14,6 +18,7 @@ st.title('Telco Customer Churn Data 🗃')
 
 @st.cache_resource(show_spinner='Connecting to database...')
 def init_connection():
+<<<<<<< HEAD
     connection_string = (
         f"DRIVER={{ODBC Driver 18 for SQL Server}};"
         f"SERVER={st.secrets['server']};"
@@ -56,4 +61,16 @@ else:
 # Display the DataFrame
 st.write(df_to_display)
 
+=======
+    pyodbc.connect(
+        "driver='{SQL SERVER}' SERVER = ",
+        + st.secrets['server']
+        + ";database"
+        + st.secrets['database']
+        + ";uid="
+        + st.secrets['username']
+        + ";pwd="
+        + st.secrets['password']
+    )
+>>>>>>> 198caaa9c9d0835c6df254b15530c22317ad7024
 
