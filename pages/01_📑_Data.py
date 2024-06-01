@@ -1,5 +1,7 @@
 import streamlit as st
 import pyodbc
+import pandas as pd
+
 
 st.set_page_config(
     page_title = 'Home Page',
@@ -23,3 +25,4 @@ def init_connection():
         + ";pwd="
         + st.secrets['password']
     )
+
