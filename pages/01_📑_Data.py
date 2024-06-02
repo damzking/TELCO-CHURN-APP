@@ -49,7 +49,7 @@ def get_all_column():
     st.session_state['dataframe'], st.session_state['data'], st.session_state['concat_df'] = df, data, concat_df
 
 # Initialize the dataframe in session state if not already there
-if 'dataframe' not in st.session_state and 'data' not in st.session_state and 'concat_df' not in st.session:
+if 'dataframe' not in st.session_state and 'data' not in st.session_state and 'concat_df' not in st.session_state:
     get_all_column()
 
 
@@ -72,16 +72,16 @@ else:
     concat_df_to_display = st.session_state['concat_df']
 
 # Display the DataFrame
-if st.checkbox('Show raw data'):
+if st.checkbox('Show data from SQL'):
     st.subheader(f'**{selection}**')
     st.write(df_to_display)
     
-if st.checkbox('Show data'):    
+if st.checkbox('Show data from GitHub'):    
     st.subheader('Telco churn data from GitHub')
     st.subheader(f'**{selection}**')
     st.write(data_to_display)
 
-if st.checkbox('Show cleaned data'):
+if st.checkbox('Show cleaned and merged data'):
     st.subheader('Cleaned and merged Telco churn data')
     st.subheader(f'**{selection}**')
     st.write(concat_df_to_display)
