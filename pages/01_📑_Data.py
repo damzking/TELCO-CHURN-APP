@@ -42,6 +42,7 @@ def get_all_column():
 if 'dataframe' not in st.session_state:
     get_all_column()
 
+st.header('Telco churn data from SQL')
 # Dropdown select box
 selection = st.selectbox('Select..', options=['All columns', 'Numerical Columns', 'Categorical Columns'], on_change=get_all_column)
 
@@ -54,6 +55,16 @@ else:
     df_to_display = st.session_state['dataframe']
 
 # Display the DataFrame
+st.subheader(f'**{selection}**')
 st.write(df_to_display)
 
+@st.cache_data
+def load_data():
+    data = pd.read_csv('LP4-Telco-Customer-Churn-Prediction-APP\Data\telco_churn_git.csv')
+    return data
+
+
+st.subheader('Telco churn data from GitHub')
+telco_churn_git = load_data()
+st.write(telco_churn_git)
 
