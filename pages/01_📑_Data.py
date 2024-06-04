@@ -12,24 +12,29 @@ st.title('Telco Customer Churn Data 🗃')
 
 
 
-@st.cache_resource(show_spinner='Connecting to database...')
-def init_connection():
-    connection_string = (
-        f"DRIVER={{ODBC Driver 18 for SQL Server}};"
-        f"SERVER={st.secrets['server']};"
-        f"DATABASE={st.secrets['database']};"
-        f"UID={st.secrets['username']};"
-        f"PWD={st.secrets['password']}"
-    )
-    return pyodbc.connect(connection_string)
+#@st.cache_resource(show_spinner='Connecting to database...')
+#def init_connection():
+    #connection_string = (
+        #f"DRIVER={{ODBC Driver 18 for SQL Server}};"
+        #f"SERVER={st.secrets['server']};"
+        #f"DATABASE={st.secrets['database']};"
+        #f"UID={st.secrets['username']};"
+        #f"PWD={st.secrets['password']}"
+    #)
+    #return pyodbc.connect(connection_string)
 
 
-conn = init_connection()
+#conn = init_connection()
 
-@st.cache_data(show_spinner= 'running query...')
+#@st.cache_data(show_spinner= 'running query...')
 # Query the database and get a DataFrame
-def get_dataframe(query):
-    return pd.read_sql(query, conn)
+#def get_dataframe(query):
+    #return pd.read_sql(query, conn)
+
+@st.cache_data
+def load_data0():
+    data0 = pd.read_csv('Data/telco_churn_sql.csv')
+    return data0
 
 @st.cache_data
 def load_data():
@@ -43,38 +48,38 @@ def load_concat_data():
 
 # Function to get all columns from a specific table
 def get_all_column():
-    df = get_dataframe("SELECT * FROM dbo.LP2_Telco_churn_first_3000")
+    data0 = pd.read_csv("Data/telco_churn_sql.csv")
     data = pd.read_csv('Data/telco_churn_git.csv')
     concat_df = pd.read_csv('Data/df_churn.csv')
-    st.session_state['dataframe'], st.session_state['data'], st.session_state['concat_df'] = df, data, concat_df
+    st.session_state['data0'], st.session_state['data'], st.session_state['concat_df'] = data0, data, concat_df
 
 # Initialize the dataframe in session state if not already there
-if 'dataframe' not in st.session_state and 'data' not in st.session_state and 'concat_df' not in st.session_state:
+if 'data0' not in st.session_state and 'data' not in st.session_state and 'concat_df' not in st.session_state:
     get_all_column()
 
 
-st.subheader('Telco churn data from SQL')
+st.subheader('Telco churn data Category')
 # Dropdown select box
 selection = st.selectbox('Select..', options=['All columns', 'Numerical Columns', 'Categorical Columns'], on_change=get_all_column)
 
 # Filter the DataFrame based on the selection
 if selection == 'Numerical Columns':
-    df_to_display = st.session_state['dataframe'].select_dtypes(include=['number'])
+    data0_to_display = st.session_state['data0'].select_dtypes(include=['number'])
     data_to_display = st.session_state['data'].select_dtypes(include=['number'])
     concat_df_to_display = st.session_state['concat_df'].select_dtypes(include=['number'])
 elif selection == 'Categorical Columns':
-    df_to_display = st.session_state['dataframe'].select_dtypes(include=['object', 'category'])
+    data0_to_display = st.session_state['data0'].select_dtypes(include=['object', 'category'])
     data_to_display = st.session_state['data'].select_dtypes(include=['object', 'category'])
     concat_df_to_display = st.session_state['concat_df'].select_dtypes(include=['object', 'category'])    
 else:
-    df_to_display = st.session_state['dataframe']
+    data0_to_display = st.session_state['data0']
     data_to_display = st.session_state['data']
     concat_df_to_display = st.session_state['concat_df']
 
 # Display the DataFrame
 if st.checkbox('Show data from SQL'):
     st.subheader(f'**{selection}**')
-    st.write(df_to_display)
+    st.write(data0_to_display)
     
 if st.checkbox('Show data from GitHub'):    
     st.subheader('Telco churn data from GitHub')
