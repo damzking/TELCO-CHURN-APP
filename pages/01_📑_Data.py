@@ -91,9 +91,4 @@ if st.checkbox('Show cleaned and merged data'):
     st.subheader(f'**{selection}**')
     st.write(concat_df_to_display)
     
-# Display the data
-#if st.checkbox('Show data'):
-   # st.subheader('Telco churn data from GitHub')
-    #telco_churn_git = load_data()
-    #st.write(telco_churn_git)
 
