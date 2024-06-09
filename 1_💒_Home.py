@@ -11,6 +11,12 @@ st.set_page_config(
 )
 
 
+def local_css(file_name):
+    with open(file_name) as f:
+        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+
+local_css("style.css")
+
 st.title("Welcome to :violet[Telco Customer Churn Prediction App]")
 
 # Check if the default Firebase app is already initialized
@@ -42,7 +48,7 @@ def app():
         ''')
         st.link_button('Repository on Github', url='https://github.com/Koanim/LP4-Telco-Customer-Churn-Prediction-APP')
         choice = st.selectbox('Login/Sign Up', ['Login', 'Sign Up'], key='unique_selectbox_key')
-     
+
         if choice == 'Login':
             with st.form("login_form"):
                 email_address = st.text_input('Email Address')

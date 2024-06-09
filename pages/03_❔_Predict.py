@@ -3,24 +3,11 @@ import joblib
 import pandas as pd
 import numpy as np
 from sklearn.pipeline import Pipeline
-from custom_imputer import CustomImputer
-from imblearn.pipeline import Pipeline as ImbPipeline
-from imblearn.over_sampling import SMOTE
 from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import GradientBoostingClassifier
 from catboost import CatBoostClassifier
 from xgboost import XGBClassifier
-from sklearn.metrics import (
-    accuracy_score, 
-    precision_score, 
-    recall_score, 
-    f1_score, 
-    roc_curve,
-    auc, 
-    confusion_matrix, 
-    classification_report
-)
-
+from custom_imputer import CustomImputer
 
 
 
@@ -30,26 +17,39 @@ st.set_page_config(
     layout='wide'
 )
 
+
+def local_css(file_name):
+    with open(file_name) as f:
+        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+
+local_css("style.css")
+
+
 st.title('Predict Telco Customer Churn')
+
 
 st.cache_resource()
 def load_XGBoost_pipeline():
     pipeline = joblib.load('./models/XGBoost_pipeline.joblib')
     return pipeline
 
+
 st.cache_resource()
 def load_Cat_Boost_pipeline():
     pipeline = joblib.load('./models/CatBoost_pipeline.joblib')
     return pipeline
+
 
 st.cache_resource()
 def GB_pipeline():
     pipeline = joblib.load('./models/GBC_pipeline.joblib')
     return pipeline
 
+
 st.cache_resource()
 def load_custom_imputer():
     return joblib.load('./models/custom_imputer.joblib')
+
 
 st.cache_resource(show_spinner= 'Model Loading....')
 def select_model():
@@ -73,6 +73,7 @@ def select_model():
     
     return pipeline, encoder
 
+
 def make_prediction(pipeline, encoder):
     gender = st.session_state['gender']
     SeniorCitizen = st.session_state['SeniorCitizen']
@@ -93,17 +94,13 @@ def make_prediction(pipeline, encoder):
     PaymentMethod = st.session_state['PaymentMethod']
     MonthlyCharges = st.session_state['MonthlyCharges']
     TotalCharges = st.session_state['TotalCharges']
-    
     data = [[gender, SeniorCitizen, Partner, Dependents, tenure, PhoneService, MultipleLines, InternetService, OnlineSecurity, OnlineBackup, DeviceProtection, TechSupport, StreamingTV, StreamingMovies, Contract, PaperlessBilling, PaymentMethod, MonthlyCharges, TotalCharges]]
-    
     columns = ['gender', 'SeniorCitizen', 'Partner', 'Dependents', 'tenure', 'PhoneService', 'MultipleLines', 'InternetService', 'OnlineSecurity', 'OnlineBackup', 'DeviceProtection', 'TechSupport', 'StreamingTV', 'StreamingMovies', 'Contract', 'PaperlessBilling', 'PaymentMethod', 'MonthlyCharges', 'TotalCharges']
-    
     df = pd.DataFrame(data, columns=columns)
     pred = pipeline.predict(df)
     pred_int = int(pred[0])
     prediction = encoder.inverse_transform([pred_int])
     probability = pipeline.predict_proba(df)
-    
     st.session_state['prediction'] = prediction
     st.session_state['probability'] = probability
     return pred
@@ -115,24 +112,23 @@ if 'prediction' not in st.session_state:
 if 'probability' not in st.session_state:
     st.session_state['probability'] = None 
 
+
 def display_form():
     pipeline, encoder = select_model()
     with st.form('my_form'):
         col1, col2 = st.columns(2)
-        
         with col1:
             st.write('### Select/Input parameters :info:')
-            st.selectbox('Customer gender', options =['Male', 'Female'], key='gender')
+            st.selectbox('Customer gender', options =['Male', 'Female'], key='gender', placeholder='Select Gender')
             st.selectbox('Is Customer a SeniorCitizen', options =['Yes', 'No'], key='SeniorCitizen')
             st.selectbox('Does Customer have a partner?', options =['Yes', 'No'], key='Partner')
             st.selectbox('Does Customer have Dependents?', options =['Yes', 'No'], key='Dependents')
-            st.number_input('tenure', key='tenure')
+            st.number_input('tenure', key='tenure', min_value=0, step=1)
             st.selectbox('Does Telco provide Phone Service', options =['Yes', 'No'], key='PhoneService')
             st.selectbox('Does Customer have Multiple Lines', options =['Yes', 'No'], key='MultipleLines')
             st.selectbox('Which type of Internet Service', options =['DSL', 'Fiber optic'], key='InternetService')
             st.selectbox('Does Telco provide Online Security', options =['Yes', 'No'], key='OnlineSecurity')
-            st.selectbox('Does Telco provide Online Backup', options =['Yes', 'No'], key='OnlineBackup')
-        
+            st.selectbox('Does Telco provide Online Backup', options =['Yes', 'No'], key='OnlineBackup', )
         with col2:
             st.write('### ....')  
             st.selectbox('Does Telco provide Device Protection', options =['Yes', 'No'], key='DeviceProtection')
@@ -144,20 +140,17 @@ def display_form():
             st.selectbox('Payment Method', options =['Electronic check', 'Mailed check', 'Bank transfer (automatic)', 'Credit card (automatic)'], key='PaymentMethod')
             st.number_input('Monthly Charges', key='MonthlyCharges')
             st.number_input('Total Charges', key='TotalCharges')
-            
-        st.form_submit_button('submit', on_click=make_prediction, kwargs=dict(pipeline=pipeline, encoder=encoder)) # st.form_submit_button('submit', on_click=make_prediction, kwargs=dict(pipeline=pipeline, encoder=encoder))
+        st.form_submit_button('Predict', on_click=make_prediction, kwargs=dict(pipeline=pipeline, encoder=encoder)) # st.form_submit_button('submit', on_click=make_prediction, kwargs=dict(pipeline=pipeline, encoder=encoder))
 
 if __name__ == '__main__':
     
     display_form()
-    
     if not st.session_state['prediction']:
         st.write('### Prediction show here')
-        
     else:
-        st.write(f'### Prediction: {st.session_state["prediction"][0]}')
-        st.write(f'### Churned: {st.session_state["prediction"][0] == "Yes"}')
-        st.write(f'### Probability: {st.session_state["probability"][0]}')
+        st.write(f'### Prediction: :red[{st.session_state["prediction"][0]}]')
+        st.write(f'### Churned: :red[{st.session_state["prediction"][0] == "Yes"}]')
+        st.write(f'### Probability: :green[{st.session_state["probability"][0]}]')
         
         
     
