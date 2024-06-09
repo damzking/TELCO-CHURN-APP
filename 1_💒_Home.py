@@ -10,6 +10,7 @@ st.set_page_config(
     layout = 'wide'
 )
 
+
 st.title("Welcome to :violet[Telco Customer Churn Prediction App]")
 
 # Check if the default Firebase app is already initialized
