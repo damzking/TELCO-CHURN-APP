@@ -1,3 +1,5 @@
-/.MLapp
 /.streamlit
 /venv
+/.lp4env
+/.lp4env/.lp4env\Lib\site-packages
+/.streamlit/secrets.toml
