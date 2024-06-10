@@ -2,14 +2,10 @@ import streamlit as st
 import joblib
 import pandas as pd
 import numpy as np
-from sklearn.pipeline import Pipeline
-from sklearn.compose import ColumnTransformer
-from sklearn.ensemble import GradientBoostingClassifier
 from catboost import CatBoostClassifier
 from xgboost import XGBClassifier
 from custom_imputer import CustomImputer
-
-
+from imblearn.over_sampling import SMOTE
 
 st.set_page_config(
     page_title='Predict Page',
@@ -17,64 +13,38 @@ st.set_page_config(
     layout='wide'
 )
 
+st.title('Telco Customer Churn Prediction 🔍')
 
-def local_css(file_name):
-    with open(file_name) as f:
-        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+@st.cache_resource
+def load_forest_pipeline():
+    return joblib.load('./models/forest_pipeline.joblib')
 
-local_css("style.css")
+@st.cache_resource
+def load_svc_pipeline():
+    return joblib.load('./models/svc_pipeline.joblib')
 
-
-st.title('Predict Telco Customer Churn')
-
-
-st.cache_resource()
-def load_XGBoost_pipeline():
-    pipeline = joblib.load('./models/XGBoost_pipeline.joblib')
-    return pipeline
-
-
-st.cache_resource()
-def load_Cat_Boost_pipeline():
-    pipeline = joblib.load('./models/CatBoost_pipeline.joblib')
-    return pipeline
-
-
-st.cache_resource()
-def GB_pipeline():
-    pipeline = joblib.load('./models/GBC_pipeline.joblib')
-    return pipeline
-
-
-st.cache_resource()
-def load_custom_imputer():
-    return joblib.load('./models/custom_imputer.joblib')
-
-
-st.cache_resource(show_spinner= 'Model Loading....')
+@st.cache_resource(show_spinner='Model is loading...')
 def select_model():
     col1, col2 = st.columns(2)
     
     with col1:
-        st.selectbox('Select Model', options=['XGBoost', 'Gradient Boosting', 'Category Boosting'], key='selected_model')
-
-    with col2:
-        pass
+        selected_model = st.selectbox('Select a model', options=['Random Forest', 'SVC'], key='selected_model')
     
-    if st.session_state['selected_model'] == 'XGBoost':
-        pipeline = load_XGBoost_pipeline()
-        
-    elif st.session_state['selected_model'] == 'Category Boosting':
-        pipeline = load_Cat_Boost_pipeline()
+    if selected_model == 'Random Forest':
+        pipeline = load_forest_pipeline()
     else:
-        pipeline = GB_pipeline()
+        pipeline = load_svc_pipeline()
     
     encoder = joblib.load('./models/encoder.joblib')
     
     return pipeline, encoder
 
+pipeline, encoder = select_model()
+
+st.write(f"Model '{st.session_state['selected_model']}' loaded successfully!")
 
 def make_prediction(pipeline, encoder):
+    customerID = st.session_state['customerID']
     gender = st.session_state['gender']
     SeniorCitizen = st.session_state['SeniorCitizen']
     Partner = st.session_state['Partner']
@@ -94,8 +64,11 @@ def make_prediction(pipeline, encoder):
     PaymentMethod = st.session_state['PaymentMethod']
     MonthlyCharges = st.session_state['MonthlyCharges']
     TotalCharges = st.session_state['TotalCharges']
-    data = [[gender, SeniorCitizen, Partner, Dependents, tenure, PhoneService, MultipleLines, InternetService, OnlineSecurity, OnlineBackup, DeviceProtection, TechSupport, StreamingTV, StreamingMovies, Contract, PaperlessBilling, PaymentMethod, MonthlyCharges, TotalCharges]]
-    columns = ['gender', 'SeniorCitizen', 'Partner', 'Dependents', 'tenure', 'PhoneService', 'MultipleLines', 'InternetService', 'OnlineSecurity', 'OnlineBackup', 'DeviceProtection', 'TechSupport', 'StreamingTV', 'StreamingMovies', 'Contract', 'PaperlessBilling', 'PaymentMethod', 'MonthlyCharges', 'TotalCharges']
+
+  
+
+    data = [[customerID, gender, SeniorCitizen, Partner, Dependents, tenure, PhoneService, MultipleLines, InternetService, OnlineSecurity, OnlineBackup, DeviceProtection, TechSupport, StreamingTV, StreamingMovies, Contract, PaperlessBilling, PaymentMethod, MonthlyCharges, TotalCharges]]
+    columns = ['customerID', 'gender', 'SeniorCitizen', 'Partner', 'Dependents', 'tenure', 'PhoneService', 'MultipleLines', 'InternetService', 'OnlineSecurity', 'OnlineBackup', 'DeviceProtection', 'TechSupport', 'StreamingTV', 'StreamingMovies', 'Contract', 'PaperlessBilling', 'PaymentMethod', 'MonthlyCharges', 'TotalCharges']
     df = pd.DataFrame(data, columns=columns)
     pred = pipeline.predict(df)
     pred_int = int(pred[0])
@@ -103,15 +76,12 @@ def make_prediction(pipeline, encoder):
     probability = pipeline.predict_proba(df)
     st.session_state['prediction'] = prediction
     st.session_state['probability'] = probability
-    return pred
-
+    return prediction
 
 if 'prediction' not in st.session_state:
     st.session_state['prediction'] = None
-    
 if 'probability' not in st.session_state:
-    st.session_state['probability'] = None 
-
+    st.session_state['probability'] = None
 
 def display_form():
     pipeline, encoder = select_model()
@@ -119,39 +89,39 @@ def display_form():
         col1, col2 = st.columns(2)
         with col1:
             st.write('### Select/Input parameters :info:')
-            st.selectbox('Customer gender', options =['Male', 'Female'], key='gender', placeholder='Select Gender')
-            st.selectbox('Is Customer a SeniorCitizen', options =['Yes', 'No'], key='SeniorCitizen')
-            st.selectbox('Does Customer have a partner?', options =['Yes', 'No'], key='Partner')
-            st.selectbox('Does Customer have Dependents?', options =['Yes', 'No'], key='Dependents')
+            st.selectbox('Customer gender', options=['Male', 'Female'], key='gender', placeholder='Select Gender')
+            st.selectbox('Is Customer a SeniorCitizen', options=['Yes', 'No'], key='SeniorCitizen')
+            st.selectbox('Does Customer have a partner?', options=['Yes', 'No'], key='Partner')
+            st.selectbox('Does Customer have Dependents?', options=['Yes', 'No'], key='Dependents')
             st.number_input('tenure', key='tenure', min_value=0, step=1)
-            st.selectbox('Does Telco provide Phone Service', options =['Yes', 'No'], key='PhoneService')
-            st.selectbox('Does Customer have Multiple Lines', options =['Yes', 'No'], key='MultipleLines')
-            st.selectbox('Which type of Internet Service', options =['DSL', 'Fiber optic'], key='InternetService')
-            st.selectbox('Does Telco provide Online Security', options =['Yes', 'No'], key='OnlineSecurity')
-            st.selectbox('Does Telco provide Online Backup', options =['Yes', 'No'], key='OnlineBackup', )
+            st.selectbox('Does Telco provide Phone Service', options=['Yes', 'No'], key='PhoneService')
+            st.selectbox('Does Customer have Multiple Lines', options=['Yes', 'No'], key='MultipleLines')
+            st.selectbox('Which type of Internet Service', options=['DSL', 'Fiber optic'], key='InternetService')
+            st.selectbox('Does Telco provide Online Security', options=['Yes', 'No'], key='OnlineSecurity')
+            st.selectbox('Does Telco provide Online Backup', options=['Yes', 'No'], key='OnlineBackup')
         with col2:
             st.write('### ....')  
-            st.selectbox('Does Telco provide Device Protection', options =['Yes', 'No'], key='DeviceProtection')
-            st.selectbox('Does Telco provide Tech Support', options =['Yes', 'No'], key='TechSupport')
-            st.selectbox('Does Telco provide Streaming TV', options =['Yes', 'No'], key='StreamingTV')
-            st.selectbox('Does Telco provide Streaming Movies', options =['Yes', 'No'], key='StreamingMovies')
-            st.selectbox('Which type of Contract', options =['Month-to-month', 'One year', 'Two year'], key='Contract')
-            st.selectbox('Paperless Billing', options =['Yes', 'No'], key='PaperlessBilling')
-            st.selectbox('Payment Method', options =['Electronic check', 'Mailed check', 'Bank transfer (automatic)', 'Credit card (automatic)'], key='PaymentMethod')
+            st.selectbox('Does Telco provide Device Protection', options=['Yes', 'No'], key='DeviceProtection')
+            st.selectbox('Does Telco provide Tech Support', options=['Yes', 'No'], key='TechSupport')
+            st.selectbox('Does Telco provide Streaming TV', options=['Yes', 'No'], key='StreamingTV')
+            st.selectbox('Does Telco provide Streaming Movies', options=['Yes', 'No'], key='StreamingMovies')
+            st.selectbox('Which type of Contract', options=['Month-to-month', 'One year', 'Two year'], key='Contract')
+            st.selectbox('Paperless Billing', options=['Yes', 'No'], key='PaperlessBilling')
+            st.selectbox('Payment Method', options=['Electronic check', 'Mailed check', 'Bank transfer (automatic)', 'Credit card (automatic)'], key='PaymentMethod')
             st.number_input('Monthly Charges', key='MonthlyCharges')
             st.number_input('Total Charges', key='TotalCharges')
-        st.form_submit_button('Predict', on_click=make_prediction, kwargs=dict(pipeline=pipeline, encoder=encoder)) # st.form_submit_button('submit', on_click=make_prediction, kwargs=dict(pipeline=pipeline, encoder=encoder))
+        st.form_submit_button('Predict', on_click=make_prediction, kwargs=dict(pipeline=pipeline, encoder=encoder))
+
 
 if __name__ == '__main__':
-    
     display_form()
-    if not st.session_state['prediction']:
-        st.write('### Prediction show here')
-    else:
-        st.write(f'### Prediction: :red[{st.session_state["prediction"][0]}]')
-        st.write(f'### Churned: :red[{st.session_state["prediction"][0] == "Yes"}]')
-        st.write(f'### Probability: :green[{st.session_state["probability"][0]}]')
-        
-        
     
-#st.write(st.session_state)
+    final_prediction = st.session_state['prediction']
+    
+    if final_prediction is None:
+        st.write('### Prediction shows here')
+        st.divider()
+    else:
+        st.write(final_prediction)
+    
+    st.write(st.session_state)
