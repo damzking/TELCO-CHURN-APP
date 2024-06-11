@@ -6,6 +6,10 @@ from catboost import CatBoostClassifier
 from xgboost import XGBClassifier
 from custom_imputer import CustomImputer
 from imblearn.over_sampling import SMOTE
+from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.compose import ColumnTransformer
+
+
 
 st.set_page_config(
     page_title='Predict Page',
@@ -15,28 +19,54 @@ st.set_page_config(
 
 st.title('Telco Customer Churn Prediction 🔍')
 
+# Initialize session state
+
+# Initialize session state with dynamic values based on user input
+default_model = 'Logistic Reg' if st.checkbox('Logistic Reg') else 'Decision Tree'
+
+if 'selected_model' not in st.session_state:
+    st.session_state['selected_model'] = default_model
+
+if 'prediction' not in st.session_state:
+    st.session_state['prediction'] = None
+
+if 'probability' not in st.session_state:
+    st.session_state['probability'] = None
+
+
+# Cache resources
 @st.cache_resource
-def load_forest_pipeline():
-    return joblib.load('./models/forest_pipeline.joblib')
+def load_Decision_tree():
+    return joblib.load('saved_models/Decision_Tree_pipeline.joblib')
 
 @st.cache_resource
-def load_svc_pipeline():
-    return joblib.load('./models/svc_pipeline.joblib')
+def logistic_pipeline():
+    return joblib.load('saved_models\Logistic_Regression_pipeline.joblib')
+
+
+@st.cache_resource
+def load_Gradient_Boost_pipeline():
+    return joblib.load('saved_models/Gradient_Boosting_pipeline.joblib')
+
+@st.cache_resource
+def load_encoder():
+    return joblib.load('saved_models/label_encoder.joblib')
 
 @st.cache_resource(show_spinner='Model is loading...')
 def select_model():
     col1, col2 = st.columns(2)
     
     with col1:
-        selected_model = st.selectbox('Select a model', options=['Random Forest', 'SVC'], key='selected_model')
-    
-    if selected_model == 'Random Forest':
-        pipeline = load_forest_pipeline()
+        selected_model = st.selectbox('Select a model', options=['Decision Tree', 'Logistic Reg', 'Gradient_Boost'], key='selected_model')
+
+    if selected_model == 'Decision Tree':
+        pipeline = load_Decision_tree()
+    elif selected_model == 'Gradient_Boost':
+        pipeline = load_Gradient_Boost_pipeline()
     else:
-        pipeline = load_svc_pipeline()
-    
-    encoder = joblib.load('./models/encoder.joblib')
-    
+        pipeline = load_Gradient_Boost_pipeline()
+
+    encoder = load_encoder()
     return pipeline, encoder
 
 pipeline, encoder = select_model()
@@ -44,6 +74,20 @@ pipeline, encoder = select_model()
 st.write(f"Model '{st.session_state['selected_model']}' loaded successfully!")
 
 def make_prediction(pipeline, encoder):
+    required_fields = [
+        'customerID', 'gender', 'SeniorCitizen', 'Partner', 'Dependents', 
+        'tenure', 'PhoneService', 'MultipleLines', 'InternetService', 
+        'OnlineSecurity', 'OnlineBackup', 'DeviceProtection', 'TechSupport', 
+        'StreamingTV', 'StreamingMovies', 'Contract', 'PaperlessBilling', 
+        'PaymentMethod', 'MonthlyCharges', 'TotalCharges'
+    ]
+    
+    missing_fields = [field for field in required_fields if field not in st.session_state or st.session_state[field] == ""]
+    
+    if missing_fields:
+        st.error(f"The following fields are missing: {', '.join(missing_fields)}")
+        return None
+
     customerID = st.session_state['customerID']
     gender = st.session_state['gender']
     SeniorCitizen = st.session_state['SeniorCitizen']
@@ -65,10 +109,22 @@ def make_prediction(pipeline, encoder):
     MonthlyCharges = st.session_state['MonthlyCharges']
     TotalCharges = st.session_state['TotalCharges']
 
-  
-
-    data = [[customerID, gender, SeniorCitizen, Partner, Dependents, tenure, PhoneService, MultipleLines, InternetService, OnlineSecurity, OnlineBackup, DeviceProtection, TechSupport, StreamingTV, StreamingMovies, Contract, PaperlessBilling, PaymentMethod, MonthlyCharges, TotalCharges]]
-    columns = ['customerID', 'gender', 'SeniorCitizen', 'Partner', 'Dependents', 'tenure', 'PhoneService', 'MultipleLines', 'InternetService', 'OnlineSecurity', 'OnlineBackup', 'DeviceProtection', 'TechSupport', 'StreamingTV', 'StreamingMovies', 'Contract', 'PaperlessBilling', 'PaymentMethod', 'MonthlyCharges', 'TotalCharges']
+    data = [[
+        customerID, gender, SeniorCitizen, Partner, Dependents, tenure, 
+        PhoneService, MultipleLines, InternetService, OnlineSecurity, 
+        OnlineBackup, DeviceProtection, TechSupport, StreamingTV, 
+        StreamingMovies, Contract, PaperlessBilling, PaymentMethod, 
+        MonthlyCharges, TotalCharges
+    ]]
+    
+    columns = [
+        'customerID', 'gender', 'SeniorCitizen', 'Partner', 'Dependents', 
+        'tenure', 'PhoneService', 'MultipleLines', 'InternetService', 
+        'OnlineSecurity', 'OnlineBackup', 'DeviceProtection', 'TechSupport', 
+        'StreamingTV', 'StreamingMovies', 'Contract', 'PaperlessBilling', 
+        'PaymentMethod', 'MonthlyCharges', 'TotalCharges'
+    ]
+    
     df = pd.DataFrame(data, columns=columns)
     pred = pipeline.predict(df)
     pred_int = int(pred[0])
@@ -78,17 +134,13 @@ def make_prediction(pipeline, encoder):
     st.session_state['probability'] = probability
     return prediction
 
-if 'prediction' not in st.session_state:
-    st.session_state['prediction'] = None
-if 'probability' not in st.session_state:
-    st.session_state['probability'] = None
-
 def display_form():
     pipeline, encoder = select_model()
     with st.form('my_form'):
         col1, col2 = st.columns(2)
         with col1:
             st.write('### Select/Input parameters :info:')
+            st.text_input('Customer ID', key='customerID')
             st.selectbox('Customer gender', options=['Male', 'Female'], key='gender', placeholder='Select Gender')
             st.selectbox('Is Customer a SeniorCitizen', options=['Yes', 'No'], key='SeniorCitizen')
             st.selectbox('Does Customer have a partner?', options=['Yes', 'No'], key='Partner')
@@ -107,11 +159,13 @@ def display_form():
             st.selectbox('Does Telco provide Streaming Movies', options=['Yes', 'No'], key='StreamingMovies')
             st.selectbox('Which type of Contract', options=['Month-to-month', 'One year', 'Two year'], key='Contract')
             st.selectbox('Paperless Billing', options=['Yes', 'No'], key='PaperlessBilling')
-            st.selectbox('Payment Method', options=['Electronic check', 'Mailed check', 'Bank transfer (automatic)', 'Credit card (automatic)'], key='PaymentMethod')
+            st.selectbox('Payment Method', options=[
+                'Electronic check', 'Mailed check', 'Bank transfer (automatic)', 
+                'Credit card (automatic)'
+            ], key='PaymentMethod')
             st.number_input('Monthly Charges', key='MonthlyCharges')
             st.number_input('Total Charges', key='TotalCharges')
         st.form_submit_button('Predict', on_click=make_prediction, kwargs=dict(pipeline=pipeline, encoder=encoder))
-
 
 if __name__ == '__main__':
     display_form()
