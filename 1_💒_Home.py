@@ -9,12 +9,19 @@ st.set_page_config(
     layout='wide'
 )
 
+
+def local_css(file_name):
+    with open(file_name) as f:
+        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+
+local_css("style.css")
+
 st.title("Welcome to :violet[Telco Customer Churn Prediction App]")
 
 # Check if the default Firebase app is already initialized
-if not firebase_admin._apps:
-    cred = credentials.Certificate('.streamlit/telco-customer-churn-predict-f7f9ee24bfdc.json')
-    firebase_admin.initialize_app(cred)
+#if not firebase_admin._apps:
+    #cred = credentials.Certificate('.streamlit/telco-customer-churn-predict-f7f9ee24bfdc.json')
+    #firebase_admin.initialize_app(cred)
 
 def initialize_session_state():
     if 'signedout' not in st.session_state:
@@ -100,8 +107,10 @@ def app():
             st.write('### Feedback Form')
             st.write('If you have any feedback, please contact us via telco@churnapp.com.')
 
-app()
+
+if __name__ == "__main__":
+    app()
 
 
-#st.write(st.session_state)
+
 
