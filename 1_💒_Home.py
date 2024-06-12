@@ -3,11 +3,10 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import auth
 
-
 st.set_page_config(
-    page_title = 'Home Page',
-    page_icon = '💒',
-    layout = 'wide'
+    page_title='Home Page',
+    page_icon='',
+    layout='wide'
 )
 
  
@@ -34,6 +33,26 @@ def sign_out():
     st.session_state.username = ''
     st.session_state.useremail = ''
  
+#if not firebase_admin._apps:
+    #cred = credentials.Certificate('.streamlit/telco-customer-churn-predict-f7f9ee24bfdc.json')
+    #firebase_admin.initialize_app(cred)
+
+def initialize_session_state():
+    if 'signedout' not in st.session_state:
+        st.session_state.signedout = False
+    if 'signout' not in st.session_state:
+        st.session_state.signout = False
+    if 'username' not in st.session_state:
+        st.session_state.username = ''
+    if 'useremail' not in st.session_state:
+        st.session_state.useremail = ''
+
+def sign_out():
+    st.session_state.signedout = False
+    st.session_state.signout = False
+    st.session_state.username = ''
+    st.session_state.useremail = ''
+
 def app():
     initialize_session_state()
  
