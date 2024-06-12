@@ -1,13 +1,12 @@
 import streamlit as st
-import pyodbc
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
+import plotly.express as px
+import plotly.graph_objects as go
 
 st.set_page_config(
-    page_title = 'Data Page',
-    page_icon = '🗃',
-    layout = 'wide'
+    page_title='Data Page',
+    page_icon='🗃',
+    layout='wide'
 )
 
 def local_css(file_name):
@@ -55,8 +54,8 @@ if selection == 'Numerical Columns':
     concat_df_to_display = st.session_state['concat_df'].select_dtypes(include=['number'])
 elif selection == 'Categorical Columns':
     data0_to_display = st.session_state['data0'].select_dtypes(include=['object', 'category'])
-    data_to_display = st.session_state['data'].select_dtypes(include=(['object', 'category']))
-    concat_df_to_display = st.session_state['concat_df'].select_dtypes(include=(['object', 'category']))
+    data_to_display = st.session_state['data'].select_dtypes(include=['object', 'category'])
+    concat_df_to_display = st.session_state['concat_df'].select_dtypes(include=['object', 'category'])    
 else:
     data0_to_display = st.session_state['data0']
     data_to_display = st.session_state['data']
@@ -98,32 +97,25 @@ if st.checkbox('Show data statistics from GitHub'):
 if st.checkbox('Show data statistics from Cleaned and Merged'):
     st.write(concat_df_to_display.describe())
 
-# Data Visualization
+# Data Visualization using Plotly
 st.markdown("## Data Visualization")
+
+def plot_histogram(df, title):
+    for col in df.columns:
+        fig = px.histogram(df, x=col, title=f'Histogram of {col}')
+        st.plotly_chart(fig)
 
 if st.checkbox('Show data visualization for SQL'):
     st.subheader('Numerical Columns')
-    for col in data0_to_display.select_dtypes(include=['number']).columns:
-        st.write(f"### {col}")
-        fig, ax = plt.subplots()
-        sns.histplot(data0_to_display[col], kde=True, ax=ax)
-        st.pyplot(fig)
+    plot_histogram(data0_to_display, 'SQL Dataset')
 
 if st.checkbox('Show data visualization for GitHub'):
     st.subheader('Numerical Columns')
-    for col in data_to_display.select_dtypes(include=['number']).columns:
-        st.write(f"### {col}")
-        fig, ax = plt.subplots()
-        sns.histplot(data_to_display[col], kde=True, ax=ax)
-        st.pyplot(fig)
+    plot_histogram(data_to_display, 'GitHub Dataset')
 
 if st.checkbox('Show data visualization for Cleaned and Merged'):
     st.subheader('Numerical Columns')
-    for col in concat_df_to_display.select_dtypes(include=['number']).columns:
-        st.write(f"### {col}")
-        fig, ax = plt.subplots()
-        sns.histplot(concat_df_to_display[col], kde=True, ax=ax)
-        st.pyplot(fig)
+    plot_histogram(concat_df_to_display, 'Cleaned and Merged Dataset')
 
 # Data Download Option
 st.markdown("## Download Data")
