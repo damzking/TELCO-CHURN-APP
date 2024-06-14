@@ -18,14 +18,8 @@ st.set_page_config(
 )
 
 st.image('resources/churn image.png', width=200)
-def local_css(file_name):
-    with open(file_name) as f:
-        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
-local_css("style.css")
-
-
-st.title('Predict Telco Customer Churn')
+st.title('Will customer Churn?')
 
 
 st.cache_resource()
@@ -119,28 +113,40 @@ def display_form():
     with st.form('my_form'):
         col1, col2 = st.columns(2)
         with col1:
-            st.write('### Select/Input parameters :info:')
+            st.markdown('### Customer Infos')
             st.selectbox('Customer gender', options =['Male', 'Female'], key='gender')
             st.selectbox('Is Customer a SeniorCitizen', options =['Yes', 'No'], key='SeniorCitizen')
             st.selectbox('Does Customer have a partner?', options =['Yes', 'No'], key='Partner')
             st.selectbox('Does Customer have Dependents?', options =['Yes', 'No'], key='Dependents')
             st.number_input('tenure', key='tenure', min_value=0, step=1)
+        
+        with col2:
+            st.write('### Telco Services')
             st.selectbox('Does Telco provide Phone Service', options =['Yes', 'No'], key='PhoneService')
             st.selectbox('Does Customer have Multiple Lines', options =['Yes', 'No'], key='MultipleLines')
             st.selectbox('Which type of Internet Service', options =['DSL', 'Fiber optic'], key='InternetService')
             st.selectbox('Does Telco provide Online Security', options =['Yes', 'No'], key='OnlineSecurity')
             st.selectbox('Does Telco provide Online Backup', options =['Yes', 'No'], key='OnlineBackup', )
-        with col2:
-            st.write('### ....')  
-            st.selectbox('Does Telco provide Device Protection', options =['Yes', 'No'], key='DeviceProtection')
-            st.selectbox('Does Telco provide Tech Support', options =['Yes', 'No'], key='TechSupport')
-            st.selectbox('Does Telco provide Streaming TV', options =['Yes', 'No'], key='StreamingTV')
-            st.selectbox('Does Telco provide Streaming Movies', options =['Yes', 'No'], key='StreamingMovies')
+        
+        col3, col4 = st.columns(2)
+        
+        with col3:
+            st.write('### Contracts & Charges')    
             st.selectbox('Which type of Contract', options =['Month-to-month', 'One year', 'Two year'], key='Contract')
             st.selectbox('Paperless Billing', options =['Yes', 'No'], key='PaperlessBilling')
             st.selectbox('Payment Method', options =['Electronic check', 'Mailed check', 'Bank transfer (automatic)', 'Credit card (automatic)'], key='PaymentMethod')
             st.number_input('Monthly Charges', key='MonthlyCharges')
             st.number_input('Total Charges', key='TotalCharges')
+        
+        
+        with col4:
+            #st.write('### Telco services cont..')  
+            st.selectbox('Does Telco provide Device Protection', options =['Yes', 'No'], key='DeviceProtection')
+            st.selectbox('Does Telco provide Tech Support', options =['Yes', 'No'], key='TechSupport')
+            st.selectbox('Does Telco provide Streaming TV', options =['Yes', 'No'], key='StreamingTV')
+            st.selectbox('Does Telco provide Streaming Movies', options =['Yes', 'No'], key='StreamingMovies')
+            
+        
         st.form_submit_button('Predict', on_click=make_prediction, kwargs=dict(pipeline=pipeline, encoder=encoder)) 
 
 
@@ -158,13 +164,20 @@ if __name__ == '__main__':
     
     display_form()
     
-
+    prediction = st.session_state['prediction']
+    probability = st.session_state['probability']
     
     if not st.session_state['prediction']:
         st.write('### Prediction show here')
     else:
-        st.write(f'### Prediction: :red[{st.session_state["prediction"][0]}]')
-        st.write(f'### Churned: :red[{st.session_state["prediction"][0] == "Yes"}]')
-        st.write(f'### Probability: :green[{st.session_state["probability"][0]}]')      
-    
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.divider()
+            st.write(f'### Prediction: :red[{st.session_state["prediction"][0]}]')
+            st.write(f'### Churned: :red[{st.session_state["prediction"][0] == "Yes"}]')
+            st.write(f'### Probability: :green[{st.session_state["probability"][0]}]')      
+        with col2:
+            if prediction == 'No':
+                st.write(f'### Churned probability is :green[{st.session_state["probability"][0][0]}]')
 #st.write(st.session_state)
