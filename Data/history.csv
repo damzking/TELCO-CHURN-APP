@@ -19,3 +19,7 @@ Female,No,No,No,10,No,No,Fiber optic,No,No,No,No,No,No,Month-to-month,No,Mailed 
 Male,Yes,Yes,Yes,0,Yes,Yes,DSL,Yes,Yes,Yes,Yes,Yes,Yes,Month-to-month,Yes,Electronic check,0.0,0.0,No,0.8700058,XGBoost
 Male,Yes,Yes,Yes,0,Yes,Yes,DSL,Yes,Yes,Yes,Yes,Yes,Yes,Month-to-month,Yes,Electronic check,0.0,0.0,No,0.6516610887762377,Gradient Boosting
 Male,Yes,Yes,Yes,0,Yes,Yes,DSL,Yes,Yes,Yes,Yes,Yes,Yes,Month-to-month,Yes,Electronic check,0.0,0.0,No,0.6516610887762377,Category Boosting
+Female,Yes,No,Yes,10,Yes,Yes,DSL,No,Yes,Yes,No,No,No,Month-to-month,Yes,Mailed check,0.0,0.0,No,0.85234135,XGBoost
+Female,Yes,No,Yes,10,Yes,Yes,DSL,No,Yes,Yes,No,No,No,Month-to-month,Yes,Mailed check,0.0,0.0,No,0.85234135,XGBoost
+Female,Yes,No,Yes,10,Yes,Yes,DSL,No,Yes,Yes,No,No,No,Month-to-month,Yes,Mailed check,0.0,0.0,No,0.7575982947975488,Gradient Boosting
+Female,Yes,No,Yes,10,Yes,Yes,DSL,No,Yes,Yes,No,No,No,Month-to-month,Yes,Mailed check,0.0,0.0,No,0.7575982947975488,Category Boosting
