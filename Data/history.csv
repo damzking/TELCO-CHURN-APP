@@ -1,0 +1,21 @@
+gender,SeniorCitizen,Partner,Dependents,tenure,PhoneService,MultipleLines,InternetService,OnlineSecurity,OnlineBackup,DeviceProtection,TechSupport,StreamingTV,StreamingMovies,Contract,PaperlessBilling,PaymentMethod,MonthlyCharges,TotalCharges,Prediction,Probability,model
+Male,Yes,Yes,Yes,0,Yes,Yes,DSL,Yes,Yes,Yes,Yes,Yes,Yes,Month-to-month,Yes,Electronic check,0.0,0.0,No,0.8700058,XGBoost
+Male,Yes,Yes,Yes,0,Yes,Yes,DSL,Yes,Yes,Yes,Yes,Yes,Yes,Month-to-month,Yes,Electronic check,0.0,0.0,No,0.6516610887762377,Gradient Boosting
+Male,Yes,Yes,Yes,0,Yes,Yes,DSL,Yes,Yes,Yes,Yes,Yes,Yes,Month-to-month,Yes,Electronic check,0.0,0.0,No,0.6516610887762377,Category Boosting
+Male,Yes,Yes,Yes,40,Yes,Yes,DSL,No,No,No,No,No,No,Two year,No,Electronic check,35.0,268.0,No,0.8729539212028983,Category Boosting
+Female,No,No,No,40,Yes,Yes,DSL,No,No,No,No,No,No,Two year,No,Electronic check,35.0,268.0,No,0.8739415026997058,Category Boosting
+Female,No,No,No,40,No,No,DSL,No,No,No,No,No,No,Two year,No,Electronic check,35.0,268.0,No,0.8514211531912321,Category Boosting
+Female,No,No,No,10,No,No,DSL,No,No,No,No,No,No,Two year,No,Electronic check,35.0,268.0,No,0.8025747018589784,Category Boosting
+Female,No,No,No,10,No,No,DSL,No,No,No,No,No,No,Two year,No,Mailed check,35.0,268.0,No,0.8921707155566339,Category Boosting
+Female,No,No,No,10,No,No,DSL,No,No,No,No,No,No,Two year,No,Mailed check,35.0,268.0,No,0.9377635,XGBoost
+Female,No,No,No,10,No,No,DSL,No,No,No,No,No,No,Two year,No,Mailed check,35.0,268.0,No,0.8921707155566339,Gradient Boosting
+Female,No,No,No,10,No,No,DSL,No,No,No,No,No,No,Two year,No,Mailed check,35.0,268.0,No,0.8921707155566339,Gradient Boosting
+Female,No,No,No,10,No,No,DSL,No,No,No,No,No,No,Two year,No,Mailed check,0.0,0.0,No,0.9323240063884237,Gradient Boosting
+Female,No,No,No,10,No,No,DSL,No,No,No,No,No,No,Month-to-month,No,Mailed check,0.0,0.0,No,0.704059214894661,Gradient Boosting
+Female,No,No,No,10,No,No,Fiber optic,No,No,No,No,No,No,Month-to-month,No,Mailed check,0.0,0.0,Yes,0.5657018599579723,Gradient Boosting
+Female,No,No,No,10,No,No,Fiber optic,No,No,No,No,No,No,Month-to-month,No,Mailed check,0.0,0.0,Yes,0.5657018599579723,Category Boosting
+Female,No,No,No,10,No,No,Fiber optic,No,No,No,No,No,No,Month-to-month,No,Mailed check,0.0,0.0,No,0.50142205,XGBoost
+Female,No,No,No,10,No,No,Fiber optic,No,No,No,No,No,No,Month-to-month,No,Mailed check,0.0,0.0,Yes,0.5657018599579723,Gradient Boosting
+Male,Yes,Yes,Yes,0,Yes,Yes,DSL,Yes,Yes,Yes,Yes,Yes,Yes,Month-to-month,Yes,Electronic check,0.0,0.0,No,0.8700058,XGBoost
+Male,Yes,Yes,Yes,0,Yes,Yes,DSL,Yes,Yes,Yes,Yes,Yes,Yes,Month-to-month,Yes,Electronic check,0.0,0.0,No,0.6516610887762377,Gradient Boosting
+Male,Yes,Yes,Yes,0,Yes,Yes,DSL,Yes,Yes,Yes,Yes,Yes,Yes,Month-to-month,Yes,Electronic check,0.0,0.0,No,0.6516610887762377,Category Boosting
