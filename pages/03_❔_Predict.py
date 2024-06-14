@@ -189,4 +189,5 @@ if __name__ == '__main__':
                 st.write(f'### Predicted probability is: :green[{round((st.session_state["probability"][0][0]*100),2)}%]')
             else:
                 st.write(f'### Predicted probability is: :red[{round((st.session_state["probability"][0][1]*100),2)}%]')
+
 #st.write(st.session_state)
