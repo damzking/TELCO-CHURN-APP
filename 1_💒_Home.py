@@ -33,9 +33,6 @@ def sign_out():
     st.session_state.username = ''
     st.session_state.useremail = ''
  
-#if not firebase_admin._apps:
-    #cred = credentials.Certificate('.streamlit/telco-customer-churn-predict-f7f9ee24bfdc.json')
-    #firebase_admin.initialize_app(cred)
 
 def initialize_session_state():
     if 'signedout' not in st.session_state:
