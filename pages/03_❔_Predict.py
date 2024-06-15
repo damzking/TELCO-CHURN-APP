@@ -163,8 +163,15 @@ if __name__ == '__main__':
     if not st.session_state['prediction']:
         st.write('### Prediction show here')
     else:
-        st.write(f'### Prediction: :red[{st.session_state["prediction"][0]}]')
-        st.write(f'### Churned: :red[{st.session_state["prediction"][0] == "Yes"}]')
-        st.write(f'### Probability: :green[{st.session_state["probability"][0]}]')      
-    
-#st.write(st.session_state)
+        col1, col2 = st.columns(2)
+
+        with col1: 
+            st.write(f'### Prediction: :red[{st.session_state["prediction"][0]}]')
+            st.write(f'### Churned: :red[{st.session_state["prediction"][0] == "Yes"}]')
+
+        with col2:
+            if st.session_state['prediction'] == 'No':
+                st.write(f'### Probability: :green[{round(st.session_state["probability"][0][0] * 100)}%]')
+            else:
+                st.write(f'### Probability: :green[{round(st.session_state["probability"][0][1] * 100)}%]')    
+
