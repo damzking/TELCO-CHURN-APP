@@ -9,7 +9,10 @@ st.set_page_config(
     layout='wide'
 )
 
- 
+
+col1, col2, col3 = st.columns(3)
+with col2:
+    st.image('resources/brainchart.webp', width=200)
 st.header(":rainbow-background[Welcome to :violet[Telco Customer Churn Prediction App]]")
  
 # Check if the default Firebase app is already initialized

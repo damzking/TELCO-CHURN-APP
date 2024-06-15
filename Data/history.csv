@@ -23,3 +23,14 @@ Female,Yes,No,Yes,10,Yes,Yes,DSL,No,Yes,Yes,No,No,No,Month-to-month,Yes,Mailed c
 Female,Yes,No,Yes,10,Yes,Yes,DSL,No,Yes,Yes,No,No,No,Month-to-month,Yes,Mailed check,0.0,0.0,No,0.85234135,XGBoost
 Female,Yes,No,Yes,10,Yes,Yes,DSL,No,Yes,Yes,No,No,No,Month-to-month,Yes,Mailed check,0.0,0.0,No,0.7575982947975488,Gradient Boosting
 Female,Yes,No,Yes,10,Yes,Yes,DSL,No,Yes,Yes,No,No,No,Month-to-month,Yes,Mailed check,0.0,0.0,No,0.7575982947975488,Category Boosting
+Female,No,Yes,Yes,0,No,Yes,DSL,Yes,Yes,Yes,No,Yes,No,One year,Yes,Electronic check,0.0,0.0,No,0.9133923947913695,Category Boosting
+Female,No,Yes,Yes,50,No,Yes,DSL,Yes,Yes,Yes,No,Yes,No,One year,Yes,Electronic check,57.01,1000.0,No,0.9217505512342351,Category Boosting
+Female,No,Yes,Yes,50,No,Yes,DSL,Yes,Yes,Yes,No,Yes,No,One year,Yes,Electronic check,57.01,1000.0,No,0.9217505512342351,Category Boosting
+Female,No,Yes,Yes,50,No,Yes,DSL,Yes,Yes,Yes,No,Yes,No,One year,Yes,Electronic check,57.01,1000.0,No,0.9217505512342351,Gradient Boosting
+Female,No,Yes,Yes,50,No,Yes,DSL,Yes,Yes,Yes,No,Yes,No,One year,Yes,Electronic check,57.01,1000.0,No,0.9217505512342351,Gradient Boosting
+Female,No,Yes,Yes,50,No,Yes,DSL,Yes,Yes,Yes,No,Yes,No,One year,Yes,Electronic check,57.01,1000.0,No,0.9217505512342351,Category Boosting
+Female,No,Yes,Yes,50,No,Yes,DSL,Yes,Yes,Yes,No,Yes,No,One year,Yes,Electronic check,57.01,1000.0,No,0.9217505512342351,Category Boosting
+Female,No,Yes,Yes,50,No,No,Fiber optic,Yes,Yes,Yes,No,Yes,No,One year,Yes,Electronic check,57.01,1000.0,No,0.9092291068450092,Category Boosting
+Female,No,Yes,Yes,50,No,No,Fiber optic,Yes,Yes,Yes,No,Yes,No,One year,Yes,Electronic check,57.01,1000.0,No,0.9092291068450092,Gradient Boosting
+Female,No,Yes,Yes,50,No,No,Fiber optic,Yes,Yes,Yes,No,Yes,No,One year,Yes,Electronic check,57.01,1000.0,No,0.9092291068450092,Gradient Boosting
+Female,No,Yes,Yes,50,No,No,Fiber optic,Yes,Yes,Yes,No,Yes,No,One year,Yes,Electronic check,57.01,1000.0,No,0.9102501,XGBoost

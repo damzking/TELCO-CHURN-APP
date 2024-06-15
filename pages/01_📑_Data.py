@@ -10,8 +10,11 @@ st.set_page_config(
 )
 
 
+col1, col2 = st.columns(2)
+with col2:
+    st.image('resources/imagesdata.jfif', width=180)
 
-st.title('Telco Customer Churn Data 🗃')
+st.header(':rainbow-background[Telco Customer Churn Data ]🗃')
 
 
 

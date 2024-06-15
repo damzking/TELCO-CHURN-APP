@@ -17,9 +17,12 @@ st.set_page_config(
     layout='wide'
 )
 
-st.image('resources/churn image.png', width=200)
+col1, col2 = st.columns(2)
 
-st.title('Will customer Churn?')
+with col1:
+    st.image('resources/churn image.png', width=200)
+with col2:
+    st.header(':rainbow-background[Will customer Churn?]')
 
 
 st.cache_resource()
