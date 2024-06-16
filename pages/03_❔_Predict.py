@@ -94,20 +94,26 @@ def make_prediction(pipeline, encoder):
     data = [[gender, SeniorCitizen, Partner, Dependents, tenure, PhoneService, MultipleLines, InternetService, OnlineSecurity, OnlineBackup, DeviceProtection, TechSupport, StreamingTV, StreamingMovies, Contract, PaperlessBilling, PaymentMethod, MonthlyCharges, TotalCharges]]
     columns = ['gender', 'SeniorCitizen', 'Partner', 'Dependents', 'tenure', 'PhoneService', 'MultipleLines', 'InternetService', 'OnlineSecurity', 'OnlineBackup', 'DeviceProtection', 'TechSupport', 'StreamingTV', 'StreamingMovies', 'Contract', 'PaperlessBilling', 'PaymentMethod', 'MonthlyCharges', 'TotalCharges']
     df = pd.DataFrame(data, columns=columns)
-    df['prediction'] = prediction
-    df['probability'] = probability
-    df['time_of_prediction'] = datetime.date.today()
-    df['model_used'] = st.session_state['selected_model']
-
-    history_file_path = './Data/history.csv'
-    df.to_csv(history_file_path, mode='a', header=not os.path.exists(history_file_path), index=False)
-
     pred = pipeline.predict(df)
     pred_int = int(pred[0])
-    prediction = encoder.inverse_transform([pred_int])
-    probability = pipeline.predict_proba(df)
+    prediction = encoder.inverse_transform([pred_int])[0]
+    probability = pipeline.predict_proba(df)[0]
+
     st.session_state['prediction'] = prediction
     st.session_state['probability'] = probability
+    
+    # Save results
+    final_probability = round(probability[pred_int], 2)
+    df['prediction'] = prediction
+    df['probability'] = final_probability
+    
+    df['model_used'] = st.session_state['selected_model']
+
+    history_file_path = './models/history.csv'
+    df.to_csv(history_file_path, mode='a', header=not os.path.exists(history_file_path), index=False)
+
+    
+    
     return prediction , probability
 
 
@@ -116,6 +122,11 @@ if 'prediction' not in st.session_state:
     
 if 'probability' not in st.session_state:
     st.session_state['probability'] = None 
+
+   
+
+
+
 
 
 def display_form():
