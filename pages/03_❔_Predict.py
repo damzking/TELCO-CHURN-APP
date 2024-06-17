@@ -1,3 +1,4 @@
+
 import streamlit as st
 import joblib
 import pandas as pd
@@ -12,12 +13,12 @@ import datetime
 
 
 
+
 st.set_page_config(
     page_title='Predict Page',
     page_icon='🔍',
     layout='wide'
 )
-
 
 
 
@@ -95,6 +96,7 @@ def make_prediction(pipeline, encoder):
     data = [[gender, SeniorCitizen, Partner, Dependents, tenure, PhoneService, MultipleLines, InternetService, OnlineSecurity, OnlineBackup, DeviceProtection, TechSupport, StreamingTV, StreamingMovies, Contract, PaperlessBilling, PaymentMethod, MonthlyCharges, TotalCharges]]
     columns = ['gender', 'SeniorCitizen', 'Partner', 'Dependents', 'tenure', 'PhoneService', 'MultipleLines', 'InternetService', 'OnlineSecurity', 'OnlineBackup', 'DeviceProtection', 'TechSupport', 'StreamingTV', 'StreamingMovies', 'Contract', 'PaperlessBilling', 'PaymentMethod', 'MonthlyCharges', 'TotalCharges']
     df = pd.DataFrame(data, columns=columns)
+    # Make prediction
     pred = pipeline.predict(df)
     pred_int = int(pred[0])
     prediction = encoder.inverse_transform([pred_int])[0]
@@ -105,30 +107,21 @@ def make_prediction(pipeline, encoder):
     
     # Save results
     final_probability = round(probability[pred_int], 2)
-    df['prediction'] = prediction
-    df['probability'] = final_probability
-    
-    df['model_used'] = st.session_state['selected_model']
+    df['prediction'] = [prediction]
+    df['probability'] = [final_probability]
+    df['time_of_prediction'] = [datetime.date.today()]
+    df['model_used'] = [st.session_state['selected_model']]
 
     history_file_path = './models/history.csv'
     df.to_csv(history_file_path, mode='a', header=not os.path.exists(history_file_path), index=False)
 
-    
-    
-    return prediction , probability
-
+    return prediction, final_probability
 
 if 'prediction' not in st.session_state:
     st.session_state['prediction'] = None
     
 if 'probability' not in st.session_state:
     st.session_state['probability'] = None 
-
-   
-
-
-
-
 
 
 def display_form():
@@ -137,7 +130,7 @@ def display_form():
         col1, col2 = st.columns(2)
         with col1:
             st.write('### Select/Input parameters :info:')
-            st.selectbox('Customer gender', options =['Male', 'Female'], key='gender')
+            st.selectbox('Customer gender', options =['Male', 'Female'], key='gender', placeholder='Select Gender')
             st.selectbox('Is Customer a SeniorCitizen', options =['Yes', 'No'], key='SeniorCitizen')
             st.selectbox('Does Customer have a partner?', options =['Yes', 'No'], key='Partner')
             st.selectbox('Does Customer have Dependents?', options =['Yes', 'No'], key='Dependents')
@@ -158,26 +151,18 @@ def display_form():
             st.selectbox('Payment Method', options =['Electronic check', 'Mailed check', 'Bank transfer (automatic)', 'Credit card (automatic)'], key='PaymentMethod')
             st.number_input('Monthly Charges', key='MonthlyCharges')
             st.number_input('Total Charges', key='TotalCharges')
-        st.form_submit_button('Predict', on_click=make_prediction, kwargs=dict(pipeline=pipeline, encoder=encoder)) 
-
-
-#warnings = []  # List to store warning messages
-
-#for key, option in st.session_state.items():
-#    if option is None:
-#       warning = f"Please enter {key}."
-#       warnings.append(warning)
-#       st.warning(warning)
-    
-
+        st.form_submit_button('Predict', on_click=make_prediction, kwargs=dict(pipeline=pipeline, encoder=encoder)) # st.form_submit_button('submit', on_click=make_prediction, kwargs=dict(pipeline=pipeline, encoder=encoder))
 
 if __name__ == '__main__':
     
     display_form()
-    
-
-    
     if not st.session_state['prediction']:
         st.write('### Prediction show here')
     else:
-
+        st.write(f'### Prediction: :red[{st.session_state["prediction"][0]}]')
+        st.write(f'### Churned: :red[{st.session_state["prediction"][0] == "Yes"}]')
+        st.write(f'### Probability: :green[{st.session_state["probability"][0]}]')
+        
+        
+    
+#st.write(st.session_state)
