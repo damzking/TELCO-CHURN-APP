@@ -19,7 +19,7 @@ with col1:
 with col2:
     st.title(':rainbow-background[EDA & Dashboard]')
 
-@st.cache_data
+@st.cache_data()
 def load_concat_data():
     concat_df = pd.read_csv('Data/df_churn.csv')
     return concat_df
@@ -30,11 +30,11 @@ if st.checkbox('Show data'):
     st.subheader('Telco churn data')
     st.write(concat_df)
 
+@st.cache_data()
 def eda_dashboard():
     
     st.subheader(' Univariate Analysis')
     col1, col2, col3 = st.columns(3)
-
 
     with col1:
         fig = px.histogram(concat_df, x='tenure', nbins=100, title='Distribution of Tenure', color_discrete_sequence=['springgreen', 'lemonchiffon'])
@@ -42,7 +42,7 @@ def eda_dashboard():
     
         catp1 = px.box(concat_df, x= 'tenure', title='Boxplot of Tenure', color_discrete_sequence=['springgreen', 'lemonchiffon'])
         st.plotly_chart(catp1)
-   
+
     with col2:    
         fig1 = px.histogram(concat_df, x='MonthlyCharges', nbins=100, title='Distribution of Monthly Charges', color_discrete_sequence=['royalblue', 'lemonchiffon'])
         st.plotly_chart(fig1)
@@ -67,7 +67,6 @@ def eda_dashboard():
         figcat = px.box(concat_df.select_dtypes(include=np.number), title='Number of Churned Customers')
         st.plotly_chart(figcat)
     
-    
     sns.set(style="ticks")
     pairplot = sns.pairplot(concat_df, hue='Churn', height=1.5, aspect=2)
     plt.subplots_adjust(top=0.9)
@@ -80,8 +79,7 @@ def eda_dashboard():
             label.set_rotation(45)
     st.pyplot(pairplot)
         
-    
-    
+@st.cache_data()
 def kpi_dashboard():    
     st.subheader('Bivariate Analysis')    
     col1, col2, col3 = st.columns(3)
@@ -97,7 +95,6 @@ def kpi_dashboard():
         fig6 = px.histogram(concat_df, x='PaymentMethod', color='Churn', color_discrete_map={'Yes':'turquoise', 'No':'slateblue'}, title='Type of Payment Method and Customer Churn')
         st.plotly_chart(fig6)
         
-
     col4, col5, col6 =st.columns(3)
     with col4:
         fig7 = px.histogram(concat_df, x='gender', color='Churn', color_discrete_map={'Yes':'turquoise', 'No':'slateblue'}, title='Gender and Customer Churn')
@@ -150,7 +147,6 @@ def kpi_dashboard():
         fig21 = px.histogram(concat_df, x='TotalCharges', color='Churn', color_discrete_map={'Yes':'turquoise', 'No':'slateblue'}, title='Total Charges and Churned Customers')
         st.plotly_chart(fig21)
     
-
     col7, col8, col9 =st.columns(3)
     with col7:    
         catplot1 = px.box(concat_df, x='gender', y= 'tenure', color='Churn', color_discrete_map={'Yes':'turquoise', 'No':'slateblue'}, title='How long it took Customers to Churn')
@@ -169,7 +165,6 @@ def kpi_dashboard():
         kpi1 = px.bar(concat_df, x='Dependents', y= 'tenure', color='Churn', color_discrete_map={'Yes':'turquoise', 'No':'slateblue'}, title='Customers with Dependents and Churn')
         st.plotly_chart(kpi1)
     #with col2 and col3:
-       
         
     kp2 = sns.catplot(data=concat_df, x='gender', y='tenure', hue='Churn', kind='bar', col='PaymentMethod', aspect=.7, palette=['blue', 'red'])
     st.pyplot(kp2)
