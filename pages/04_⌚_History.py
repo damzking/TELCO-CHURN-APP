@@ -2,10 +2,11 @@ import streamlit as st
 import os
 import pandas as pd
 
+# Set the page configuration
 st.set_page_config(
-    page_title = 'History Page',
-    page_icon = '🗓',
-    layout = 'wide'
+    page_title='History Page',
+    page_icon='🗓',
+    layout='wide'
 )
 
 col1, col2 = st.columns(2)
@@ -32,3 +33,16 @@ def display_historic_predictions():
         
 if __name__ == '__main__':
     display_historic_predictions()
+
+
+def historic_prediction():
+    csv_path = './models/history.csv'
+    csv_exists = os.path.exists(csv_path)
+
+    if csv_exists:
+        history = pd.read_csv(csv_path)
+        st.dataframe(history)
+
+if __name__ == "__main__":
+    st.title("Prediction History")
+    historic_prediction()

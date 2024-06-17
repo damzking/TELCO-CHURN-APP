@@ -1,12 +1,12 @@
 import streamlit as st
-import pyodbc
 import pandas as pd
-
+import plotly.express as px
+import plotly.graph_objects as go
 
 st.set_page_config(
-    page_title = 'Data Page',
-    page_icon = '🗃',
-    layout = 'wide'
+    page_title='Data Page',
+    page_icon='🗃',
+    layout='wide'
 )
 
 
@@ -15,27 +15,6 @@ with col2:
     st.write('### :rainbow-background[Telco Customer Churn Data ]🗃')
 with col1:
     st.image('resources/imagesdata.jfif', width=300)
-
-
-
-#@st.cache_resource(show_spinner='Connecting to database...')
-#def init_connection():
-    #connection_string = (
-        #f"DRIVER={{ODBC Driver 18 for SQL Server}};"
-        #f"SERVER={st.secrets['server']};"
-        #f"DATABASE={st.secrets['database']};"
-        #f"UID={st.secrets['username']};"
-        #f"PWD={st.secrets['password']}"
-    #)
-    #return pyodbc.connect(connection_string)
-
-
-#conn = init_connection()
-
-#@st.cache_data(show_spinner= 'running query...')
-# Query the database and get a DataFrame
-#def get_dataframe(query):
-    #return pd.read_sql(query, conn)
 
 @st.cache_data
 def load_data0():

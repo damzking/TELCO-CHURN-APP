@@ -7,7 +7,8 @@ from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import GradientBoostingClassifier
 from catboost import CatBoostClassifier
 from xgboost import XGBClassifier
-from custom_imputer import CustomImputer
+import os
+import datetime
 
 
 
@@ -99,8 +100,9 @@ def make_prediction(pipeline, encoder):
     
     pred = pipeline.predict(df)
     pred_int = int(pred[0])
-    prediction = encoder.inverse_transform([pred_int])
-    probability = pipeline.predict_proba(df)
+    prediction = encoder.inverse_transform([pred_int])[0]
+    probability = pipeline.predict_proba(df)[0]
+
     st.session_state['prediction'] = prediction
     st.session_state['probability'] = probability
     
@@ -122,6 +124,11 @@ if 'prediction' not in st.session_state:
     
 if 'probability' not in st.session_state:
     st.session_state['probability'] = None 
+
+   
+
+
+
 
 
 

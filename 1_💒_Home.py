@@ -19,6 +19,23 @@ st.header(":gray-background[Welcome to :rainbow[Telco Customer Churn Prediction 
 if not firebase_admin._apps:
     cred = credentials.Certificate('.streamlit/telco-customer-churn-predict-f7f9ee24bfdc.json')
     firebase_admin.initialize_app(cred)
+ 
+def initialize_session_state():
+    if 'signedout' not in st.session_state:
+        st.session_state.signedout = False
+    if 'signout' not in st.session_state:
+        st.session_state.signout = False
+    if 'username' not in st.session_state:
+        st.session_state.username = ''
+    if 'useremail' not in st.session_state:
+        st.session_state.useremail = ''
+ 
+def sign_out():
+    st.session_state.signedout = False
+    st.session_state.signout = False
+    st.session_state.username = ''
+    st.session_state.useremail = ''
+ 
 
 def initialize_session_state():
     if 'signedout' not in st.session_state:
