@@ -22,6 +22,7 @@ st.set_page_config(
 
 
 
+
 st.title('Predict Telco Customer Churn')
 
 
@@ -129,13 +130,14 @@ if 'probability' not in st.session_state:
 
 
 
+
 def display_form():
     pipeline, encoder = select_model()
     with st.form('my_form'):
         col1, col2 = st.columns(2)
         with col1:
             st.write('### Select/Input parameters :info:')
-            st.selectbox('Customer gender', options =['Male', 'Female'], key='gender', placeholder='Select Gender')
+            st.selectbox('Customer gender', options =['Male', 'Female'], key='gender')
             st.selectbox('Is Customer a SeniorCitizen', options =['Yes', 'No'], key='SeniorCitizen')
             st.selectbox('Does Customer have a partner?', options =['Yes', 'No'], key='Partner')
             st.selectbox('Does Customer have Dependents?', options =['Yes', 'No'], key='Dependents')
@@ -156,18 +158,26 @@ def display_form():
             st.selectbox('Payment Method', options =['Electronic check', 'Mailed check', 'Bank transfer (automatic)', 'Credit card (automatic)'], key='PaymentMethod')
             st.number_input('Monthly Charges', key='MonthlyCharges')
             st.number_input('Total Charges', key='TotalCharges')
-        st.form_submit_button('Predict', on_click=make_prediction, kwargs=dict(pipeline=pipeline, encoder=encoder)) # st.form_submit_button('submit', on_click=make_prediction, kwargs=dict(pipeline=pipeline, encoder=encoder))
+        st.form_submit_button('Predict', on_click=make_prediction, kwargs=dict(pipeline=pipeline, encoder=encoder)) 
+
+
+#warnings = []  # List to store warning messages
+
+#for key, option in st.session_state.items():
+#    if option is None:
+#       warning = f"Please enter {key}."
+#       warnings.append(warning)
+#       st.warning(warning)
+    
+
 
 if __name__ == '__main__':
     
     display_form()
+    
+
+    
     if not st.session_state['prediction']:
         st.write('### Prediction show here')
     else:
-        st.write(f'### Prediction: :red[{st.session_state["prediction"][0]}]')
-        st.write(f'### Churned: :red[{st.session_state["prediction"][0] == "Yes"}]')
-        st.write(f'### Probability: :green[{st.session_state["probability"][0]}]')
-        
-        
-    
-st.write(st.session_state)
+
