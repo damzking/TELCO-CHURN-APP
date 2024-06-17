@@ -7,7 +7,8 @@ from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import GradientBoostingClassifier
 from catboost import CatBoostClassifier
 from xgboost import XGBClassifier
-from custom_imputer import CustomImputer
+import os
+import datetime
 
 
 
@@ -17,12 +18,9 @@ st.set_page_config(
     layout='wide'
 )
 
-st.image('resources/churn image.png', width=200)
-def local_css(file_name):
-    with open(file_name) as f:
-        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
-local_css("style.css")
+
+
 
 
 st.title('Predict Telco Customer Churn')
@@ -99,11 +97,25 @@ def make_prediction(pipeline, encoder):
     df = pd.DataFrame(data, columns=columns)
     pred = pipeline.predict(df)
     pred_int = int(pred[0])
-    prediction = encoder.inverse_transform([pred_int])
-    probability = pipeline.predict_proba(df)
+    prediction = encoder.inverse_transform([pred_int])[0]
+    probability = pipeline.predict_proba(df)[0]
+
     st.session_state['prediction'] = prediction
     st.session_state['probability'] = probability
-    return pred
+    
+    # Save results
+    final_probability = round(probability[pred_int], 2)
+    df['prediction'] = prediction
+    df['probability'] = final_probability
+    
+    df['model_used'] = st.session_state['selected_model']
+
+    history_file_path = './models/history.csv'
+    df.to_csv(history_file_path, mode='a', header=not os.path.exists(history_file_path), index=False)
+
+    
+    
+    return prediction , probability
 
 
 if 'prediction' not in st.session_state:
@@ -111,6 +123,11 @@ if 'prediction' not in st.session_state:
     
 if 'probability' not in st.session_state:
     st.session_state['probability'] = None 
+
+   
+
+
+
 
 
 
@@ -163,15 +180,4 @@ if __name__ == '__main__':
     if not st.session_state['prediction']:
         st.write('### Prediction show here')
     else:
-        col1, col2 = st.columns(2)
-
-        with col1: 
-            st.write(f'### Prediction: :red[{st.session_state["prediction"][0]}]')
-            st.write(f'### Churned: :red[{st.session_state["prediction"][0] == "Yes"}]')
-
-        with col2:
-            if st.session_state['prediction'] == 'No':
-                st.write(f'### Probability: :green[{round(st.session_state["probability"][0][0] * 100)}%]')
-            else:
-                st.write(f'### Probability: :green[{round(st.session_state["probability"][0][1] * 100)}%]')    
 
