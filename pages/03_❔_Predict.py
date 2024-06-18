@@ -96,8 +96,6 @@ def make_prediction(pipeline, encoder):
     columns = ['gender', 'SeniorCitizen', 'Partner', 'Dependents', 'tenure', 'PhoneService', 'MultipleLines', 'InternetService', 'OnlineSecurity', 'OnlineBackup', 'DeviceProtection', 'TechSupport', 'StreamingTV', 'StreamingMovies', 'Contract', 'PaperlessBilling', 'PaymentMethod', 'MonthlyCharges', 'TotalCharges']
     df = pd.DataFrame(data, columns=columns)
     
-    #df.to_csv('./Data/history.csv', mode='a', index=False, header=False)
-    
     pred = pipeline.predict(df)
     pred_int = int(pred[0])
     prediction = encoder.inverse_transform([pred_int])[0]
@@ -108,15 +106,14 @@ def make_prediction(pipeline, encoder):
     
     df['Prediction'] = prediction
     if prediction == 'No':
-        df['Probability'] = st.session_state["probability"][0][0]
+        df['Probability'] = st.session_state["probability"][0]
     else:
-        df['Probability'] = st.session_state["probability"][0][1]
+        df['Probability'] = st.session_state["probability"][1]
     df['model'] = st.session_state['selected_model']
     
     df.to_csv('./Data/history.csv', mode='a', index=False, header=False)
     
-    return pred
-
+    return prediction
 
 
 if 'prediction' not in st.session_state:
@@ -125,16 +122,9 @@ if 'prediction' not in st.session_state:
 if 'probability' not in st.session_state:
     st.session_state['probability'] = None 
 
-   
-
-
-
-
-
-
 def display_form():
     pipeline, encoder = select_model()
-    with st.form('my_form'):
+    with st.form('input_form'):
         col1, col2 = st.columns(2)
         with col1:
             st.markdown('### Customer Infos')
@@ -169,9 +159,7 @@ def display_form():
             st.selectbox('Does Telco provide Tech Support', options =['Yes', 'No'], key='TechSupport')
             st.selectbox('Does Telco provide Streaming TV', options =['Yes', 'No'], key='StreamingTV')
             st.selectbox('Does Telco provide Streaming Movies', options =['Yes', 'No'], key='StreamingMovies')
-            
-        
-        st.form_submit_button('Predict', on_click=make_prediction, kwargs=dict(pipeline=pipeline, encoder=encoder)) 
+        st.form_submit_button('Submit', on_click=make_prediction, kwargs=dict(pipeline=pipeline, encoder=encoder)) #st.form_submit_button('Predict', on_click=make_prediction, kwargs=dict(pipeline=pipeline, encoder=encoder)) 
 
 
 
@@ -182,21 +170,26 @@ if __name__ == '__main__':
     prediction = st.session_state['prediction']
     probability = st.session_state['probability']
 
+    #st.write(st.session_state["probability"][0])
+    #st.write(st.session_state["prediction"])
+    
     if not st.session_state['prediction']:
         st.write('### Prediction show here')
+        
     else:
         col1, col2 = st.columns(2)
         
         with col1:
-            st.subheader('Prediction')
-            st.write(f'### Prediction: :red[{st.session_state["prediction"][0]}]')
-            st.write(f'### Churned: :red[{st.session_state["prediction"][0] == "Yes"}]')
-            #st.write(f'### Probability: :green[{st.session_state["probability"][0]}]')      
+            
+            if st.session_state["prediction"] == "Yes":
+                st.write("### Churned :red[Yes]\nCustomer is likely to churn")
+            else: 
+                st.write(f'### Not Churned :green[No]\nCustomer is not likely to churn')     
         with col2:
-            st.subheader('Probability')
+            st.subheader('@ What Probability?')
             if prediction == 'No':
-                st.write(f'### Predicted probability is: :green[{round((st.session_state["probability"][0][0]*100),2)}%]')
+                st.write(f'#### :green[{round((st.session_state["probability"][0]*100),2)}%] chance of customer not churning.')
             else:
-                st.write(f'### Predicted probability is: :red[{round((st.session_state["probability"][0][1]*100),2)}%]')
+                st.write(f'#### :red[{round((st.session_state["probability"][1]*100),2)}%] chance of customer churning.')
 
 #st.write(st.session_state)
