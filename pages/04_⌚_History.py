@@ -35,14 +35,3 @@ if __name__ == '__main__':
     display_historic_predictions()
 
 
-def historic_prediction():
-    csv_path = './models/history.csv'
-    csv_exists = os.path.exists(csv_path)
-
-    if csv_exists:
-        history = pd.read_csv(csv_path)
-        st.dataframe(history)
-
-if __name__ == "__main__":
-    st.title("Prediction History")
-    historic_prediction()
