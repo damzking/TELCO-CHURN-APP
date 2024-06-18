@@ -20,22 +20,22 @@ if not firebase_admin._apps:
     cred = credentials.Certificate('.streamlit/telco-customer-churn-predict-f7f9ee24bfdc.json')
     firebase_admin.initialize_app(cred)
  
-def initialize_session_state():
-    if 'signedout' not in st.session_state:
-        st.session_state.signedout = False
-    if 'signout' not in st.session_state:
-        st.session_state.signout = False
-    if 'username' not in st.session_state:
-        st.session_state.username = ''
-    if 'useremail' not in st.session_state:
-        st.session_state.useremail = ''
+#def initialize_session_state():
+#    if 'signedout' not in st.session_state:
+#        st.session_state.signedout = False
+#    if 'signout' not in st.session_state:
+#        st.session_state.signout = False
+#    if 'username' not in st.session_state:
+#        st.session_state.username = ''
+#    if 'useremail' not in st.session_state:
+#        st.session_state.useremail = ''
  
-def sign_out():
-    st.session_state.signedout = False
-    st.session_state.signout = False
-    st.session_state.username = ''
-    st.session_state.useremail = ''
- 
+#def sign_out():
+#    st.session_state.signedout = False
+#    st.session_state.signout = False
+#    st.session_state.username = ''
+#    st.session_state.useremail = ''
+
 
 def initialize_session_state():
     if 'signedout' not in st.session_state:
@@ -66,13 +66,21 @@ def app():
         streamlit run home.py
         ''')
         st.link_button('Repository on Github', url='https://github.com/Koanim/LP4-Telco-Customer-Churn-Prediction-APP')
- 
+        def sign_in():
+            st.session_state.sign_in = True
+            login_button = True
+            return login_button
+        def sign_up():
+            st.session_state.sign_up = True
+            signup_button = True
+            return signup_button
+            
         if not st.session_state.signedout:
             col3, col4 = st.columns(2)
             with col3:
-                login = st.button('Login', key='login_button')
+                login = st.button('Login', key='login_button', on_click='sing_in()')
             with col4:
-                signup = st.button('SignUp', key='signup_button')
+                signup = st.button('SignUp', key='signup_button', on_click='sign_up()')
             
                 if login == 'Login':
                     with st.form("login_form"):
