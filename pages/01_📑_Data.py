@@ -11,7 +11,7 @@ st.set_page_config(
 
 
 
-st.title('Telco Customer Churn Data 🗃')
+st.title(':rainbow[Telco Customer Churn Data] 🗃')
 
 @st.cache_data
 def load_data0():

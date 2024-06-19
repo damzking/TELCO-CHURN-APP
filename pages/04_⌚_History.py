@@ -12,7 +12,7 @@ st.set_page_config(
 
 
 def historic_prediction():
-    csv_path = './models/history.csv'
+    csv_path = 'Data/history.csv'
     csv_exists = os.path.exists(csv_path)
 
     if csv_exists:
@@ -20,5 +20,5 @@ def historic_prediction():
         st.dataframe(history)
 
 if __name__ == "__main__":
-    st.title("Prediction History")
+    st.title(":rainbow[Prediction History]")
     historic_prediction()
