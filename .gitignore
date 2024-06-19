@@ -5,3 +5,4 @@
 /.streamlit/secrets.toml
 /.streamlit/telco-customer-churn-predict-f7f9ee24bfdc.json
 /__pycache__
+/.DS_Store
