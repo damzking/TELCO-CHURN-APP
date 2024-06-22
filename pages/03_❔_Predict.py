@@ -9,7 +9,9 @@ from catboost import CatBoostClassifier
 from xgboost import XGBClassifier
 import os
 import datetime
-
+import streamlit_authenticator as stauth
+import yaml
+from yaml.loader import SafeLoader
 
 
 st.set_page_config(
@@ -18,12 +20,17 @@ st.set_page_config(
     layout='wide'
 )
 
-col1, col2 = st.columns(2)
 
-with col1:
-    st.image('resources/churn image.png', width=200)
-with col2:
-    st.header(':rainbow-background[Will customer Churn?]')
+with open('.streamlit/config.yaml') as file:
+    config = yaml.load(file, Loader=SafeLoader)
+
+authenticator = stauth.Authenticate(
+    config['credentials'],
+    config['cookie']['name'],
+    config['cookie']['key'],
+    config['cookie']['expiry_days'],
+    config['pre-authorized']
+)
 
 
 st.cache_resource()
@@ -166,9 +173,14 @@ def display_form():
         st.form_submit_button('Submit', on_click=make_prediction, kwargs=dict(pipeline=pipeline, encoder=encoder)) #st.form_submit_button('Predict', on_click=make_prediction, kwargs=dict(pipeline=pipeline, encoder=encoder)) 
 
 
+if st.session_state['authentication_status']:    
+    authenticator.logout(location='sidebar')
+    col1, col2 = st.columns(2)
+    with col1:
+        st.image('resources/churn image.png', width=200)
+    with col2:
+        st.header(':rainbow-background[Will customer Churn?]')
 
-if __name__ == '__main__':
-    
     display_form()
     
     final_prediction = st.session_state['prediction']
@@ -177,7 +189,7 @@ if __name__ == '__main__':
         
     else:
         col1, col2 = st.columns(2)
-        
+
         with col1:
             if final_prediction == "Yes":
                 st.write("### Churned :green[Yes]\nCustomer is likely to churn")
@@ -190,3 +202,6 @@ if __name__ == '__main__':
             else:
                 st.write(f'#### :green[{round((st.session_state["probability"][1]*100),2)}%] chance of customer churning.')
 
+
+else:
+    st.info('Login to gain access to the app')
