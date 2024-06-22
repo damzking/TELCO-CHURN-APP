@@ -88,7 +88,8 @@ def background():
 7.  The average number of churn for customers that have **Yes** values for **seniorCitizen** is greater than or equal to those with **No** values.
                 """)
         
-    #st.write('#### Feedback')
+    st.write('#### Feedback')
+    st.write(' Contact us on info@customerpredict.com for more enquiry' )
 
 with open('.streamlit/config.yaml') as file:
     config = yaml.load(file, Loader=SafeLoader)
@@ -106,6 +107,7 @@ name, authentication_status, username = authenticator.login(location = 'sidebar'
 
 if st.session_state['authentication_status']:
     authenticator.logout(location='sidebar')
+    st.sidebar.write(f'welcome {username}')
     if st.sidebar.button('Reset Password'):
             st.session_state['reset_password'] = True
     if st.session_state.get('reset_password'):
