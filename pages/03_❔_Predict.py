@@ -18,8 +18,12 @@ st.set_page_config(
     layout='wide'
 )
 
+col1, col2 = st.columns(2)
 
-st.title(':rainbow[Predict Telco Customer Churn]')
+with col1:
+    st.image('resources/churn image.png', width=200)
+with col2:
+    st.header(':rainbow-background[Will customer Churn?]')
 
 
 st.cache_resource()
@@ -91,6 +95,7 @@ def make_prediction(pipeline, encoder):
     data = [[gender, SeniorCitizen, Partner, Dependents, tenure, PhoneService, MultipleLines, InternetService, OnlineSecurity, OnlineBackup, DeviceProtection, TechSupport, StreamingTV, StreamingMovies, Contract, PaperlessBilling, PaymentMethod, MonthlyCharges, TotalCharges]]
     columns = ['gender', 'SeniorCitizen', 'Partner', 'Dependents', 'tenure', 'PhoneService', 'MultipleLines', 'InternetService', 'OnlineSecurity', 'OnlineBackup', 'DeviceProtection', 'TechSupport', 'StreamingTV', 'StreamingMovies', 'Contract', 'PaperlessBilling', 'PaymentMethod', 'MonthlyCharges', 'TotalCharges']
     df = pd.DataFrame(data, columns=columns)
+    
     pred = pipeline.predict(df)
     pred_int = int(pred[0])
     prediction = encoder.inverse_transform([pred_int])[0]
@@ -100,7 +105,7 @@ def make_prediction(pipeline, encoder):
     st.session_state['probability'] = probability
     
     # Save results
-    #final_probability = round(probability[pred_int], 2)
+   
     df['prediction'] = prediction
     if prediction == 'No':
         df['Probability'] = st.session_state["probability"][0]
@@ -121,11 +126,9 @@ if 'prediction' not in st.session_state:
 if 'probability' not in st.session_state:
     st.session_state['probability'] = None 
 
-
-
 def display_form():
     pipeline, encoder = select_model()
-    with st.form('my_form'):
+    with st.form('input_form'):
         col1, col2 = st.columns(2)
         with col1:
             st.markdown('### Customer Infos')
@@ -155,12 +158,12 @@ def display_form():
         
         
         with col4:
-            st.write('### Telco services cont..')  
+            #st.write('### Telco services cont..')  
             st.selectbox('Does Telco provide Device Protection', options =['Yes', 'No'], key='DeviceProtection')
             st.selectbox('Does Telco provide Tech Support', options =['Yes', 'No'], key='TechSupport')
             st.selectbox('Does Telco provide Streaming TV', options =['Yes', 'No'], key='StreamingTV')
             st.selectbox('Does Telco provide Streaming Movies', options =['Yes', 'No'], key='StreamingMovies')
-        st.form_submit_button('Submit', on_click=make_prediction, kwargs=dict(pipeline=pipeline, encoder=encoder))
+        st.form_submit_button('Submit', on_click=make_prediction, kwargs=dict(pipeline=pipeline, encoder=encoder)) #st.form_submit_button('Predict', on_click=make_prediction, kwargs=dict(pipeline=pipeline, encoder=encoder)) 
 
 
 
@@ -171,6 +174,7 @@ if __name__ == '__main__':
     final_prediction = st.session_state['prediction']
     if not final_prediction:
         st.write('### Prediction show here')
+        
     else:
         col1, col2 = st.columns(2)
         
