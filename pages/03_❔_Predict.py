@@ -104,16 +104,20 @@ def make_prediction(pipeline, encoder):
     st.session_state['prediction'] = prediction
     st.session_state['probability'] = probability
     
-    df['Prediction'] = prediction
+    # Save results
+   
+    df['prediction'] = prediction
     if prediction == 'No':
         df['Probability'] = st.session_state["probability"][0]
     else:
         df['Probability'] = st.session_state["probability"][1]
-    df['model'] = st.session_state['selected_model']
     
-    df.to_csv('./Data/history.csv', mode='a', index=False, header=False)
-    
-    return prediction
+    df['model_used'] = st.session_state['selected_model']
+
+    history_file_path = 'Data/history.csv'
+    df.to_csv(history_file_path, mode='a', header=not os.path.exists(history_file_path), index=False)
+
+    return prediction , probability
 
 
 if 'prediction' not in st.session_state:
@@ -167,29 +171,22 @@ if __name__ == '__main__':
     
     display_form()
     
-    prediction = st.session_state['prediction']
-    probability = st.session_state['probability']
-
-    #st.write(st.session_state["probability"][0])
-    #st.write(st.session_state["prediction"])
-    
-    if not st.session_state['prediction']:
+    final_prediction = st.session_state['prediction']
+    if not final_prediction:
         st.write('### Prediction show here')
         
     else:
         col1, col2 = st.columns(2)
         
         with col1:
-            
-            if st.session_state["prediction"] == "Yes":
-                st.write("### Churned :red[Yes]\nCustomer is likely to churn")
+            if final_prediction == "Yes":
+                st.write("### Churned :green[Yes]\nCustomer is likely to churn")
             else: 
-                st.write(f'### Not Churned :green[No]\nCustomer is not likely to churn')     
+                st.write(f'### Not Churned :red[No]\nCustomer is not likely to churn')     
         with col2:
             st.subheader('@ What Probability?')
-            if prediction == 'No':
-                st.write(f'#### :green[{round((st.session_state["probability"][0]*100),2)}%] chance of customer not churning.')
+            if final_prediction == 'No':
+                st.write(f'#### :red[{round((st.session_state["probability"][0]*100),2)}%] chance of customer not churning.')
             else:
-                st.write(f'#### :red[{round((st.session_state["probability"][1]*100),2)}%] chance of customer churning.')
+                st.write(f'#### :green[{round((st.session_state["probability"][1]*100),2)}%] chance of customer churning.')
 
-#st.write(st.session_state)

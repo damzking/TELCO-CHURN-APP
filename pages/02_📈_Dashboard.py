@@ -30,7 +30,27 @@ if st.checkbox('Show data'):
     st.subheader('Telco churn data')
     st.write(concat_df)
 
-@st.cache_data()
+def final_indicator():
+        st.markdown(
+                f"""
+                <div style= "background-color: turquoise; border-radius: 10px; width: 60%; margin-top: 20px;" >
+                    <h3 style="margin-left: 30px">Quick Stats About Dataset</h3>
+                    <hr>
+                    <h5 style="margin-left: 30px"> Churn Rate: {(concat_df['Churn'].value_counts(normalize = True).get('Yes', 0)* 100):.2f}%.</h5>
+                    </hr>
+                    <h5 style="margin-left: 30px"> Average Monthly Charges: ${concat_df['MonthlyCharges'].mean():.2f}</h5>
+                    </hr>
+                    <h5 style="margin-left: 30px"> Count of Churned Customers : {concat_df['Churn'].value_counts().get('Yes')}</h5>
+                    </hr>
+                    <h5 style="margin-left: 30px"> Count of Retained Customers : {concat_df['Churn'].value_counts().get('No')}</h5>
+                    </hr>
+                    <h5 style="margin-left: 30px"> Data Size: {concat_df.size}</h5>
+                </div>
+                """,
+                unsafe_allow_html=True
+                )
+
+#@st.cache_data()
 def eda_dashboard():
     
     st.subheader(' Univariate Analysis')
@@ -79,9 +99,12 @@ def eda_dashboard():
             label.set_rotation(45)
     st.pyplot(pairplot)
         
-@st.cache_data()
+#@st.cache_data()
 def kpi_dashboard():    
-    st.subheader('Bivariate Analysis')    
+    st.subheader('Bivariate Analysis')
+
+    final_indicator()
+ 
     col1, col2, col3 = st.columns(3)
     with col1:
         fig4 = px.histogram(concat_df, x='Churn', color='Churn', color_discrete_map={'Yes':'turquoise', 'No':'slateblue'}, title='Number of Churned Customers')
@@ -164,14 +187,16 @@ def kpi_dashboard():
     with col1:
         kpi1 = px.bar(concat_df, x='Dependents', y= 'tenure', color='Churn', color_discrete_map={'Yes':'turquoise', 'No':'slateblue'}, title='Customers with Dependents and Churn')
         st.plotly_chart(kpi1)
-    #with col2 and col3:
-        
-    kp2 = sns.catplot(data=concat_df, x='gender', y='tenure', hue='Churn', kind='bar', col='PaymentMethod', aspect=.7, palette=['blue', 'red'])
-    st.pyplot(kp2)
+    
+    with col2 and col3:
+        kp2 = sns.catplot(data=concat_df, x='gender', y='tenure', hue='Churn', kind='bar', col='PaymentMethod', aspect=.7, palette=['blue', 'red'])
+        st.pyplot(kp2)
+
+
             
 if __name__ == '__main__':
     st.title('Dashboard')
-    
+
     col1, col2 = st.columns(2)
     with col1:
         pass
