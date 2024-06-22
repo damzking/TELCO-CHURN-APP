@@ -78,9 +78,9 @@ def app():
         if not st.session_state.signedout:
             col3, col4 = st.columns(2)
             with col3:
-                login = st.button('Login', key='login_button', on_click='sing_in()')
+                login = st.button('Login', key='login_button', on_click=sign_in)
             with col4:
-                signup = st.button('SignUp', key='signup_button', on_click='sign_up()')
+                signup = st.button('SignUp', key='signup_button', on_click=sign_up)
             
                 if login == 'Login':
                     with st.form("login_form"):
