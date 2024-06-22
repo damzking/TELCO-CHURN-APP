@@ -4,8 +4,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.pyplot as plt
 import seaborn as sns
-
 import plotly.express as px
+import streamlit_authenticator as stauth
+import yaml
+from yaml.loader import SafeLoader
 
 st.set_page_config(
     page_title = 'Dashboard Page',
@@ -13,11 +15,18 @@ st.set_page_config(
     layout = 'wide'
 )
 
-col1, col2 = st.columns(2)
-with col1:
-    st.image('resources/dashb1.jpg', width=200)
-with col2:
-    st.title(':rainbow-background[EDA & Dashboard]')
+
+with open('.streamlit/config.yaml') as file:
+    config = yaml.load(file, Loader=SafeLoader)
+
+authenticator = stauth.Authenticate(
+    config['credentials'],
+    config['cookie']['name'],
+    config['cookie']['key'],
+    config['cookie']['expiry_days'],
+    config['pre-authorized']
+)
+
 
 @st.cache_data()
 def load_concat_data():
@@ -26,29 +35,29 @@ def load_concat_data():
 
 concat_df = load_concat_data()
 
-if st.checkbox('Show data'):
-    st.subheader('Telco churn data')
-    st.write(concat_df)
-
 def final_indicator():
-        st.markdown(
-                f"""
+            st.markdown(f"""
                 <div style= "background-color: turquoise; border-radius: 10px; width: 60%; margin-top: 20px;" >
                     <h3 style="margin-left: 30px">Quick Stats About Dataset</h3>
                     <hr>
-                    <h5 style="margin-left: 30px"> Churn Rate: {(concat_df['Churn'].value_counts(normalize = True).get('Yes', 0)* 100):.2f}%.</h5>
-                    </hr>
-                    <h5 style="margin-left: 30px"> Average Monthly Charges: ${concat_df['MonthlyCharges'].mean():.2f}</h5>
-                    </hr>
-                    <h5 style="margin-left: 30px"> Count of Churned Customers : {concat_df['Churn'].value_counts().get('Yes')}</h5>
-                    </hr>
-                    <h5 style="margin-left: 30px"> Count of Retained Customers : {concat_df['Churn'].value_counts().get('No')}</h5>
-                    </hr>
-                    <h5 style="margin-left: 30px"> Data Size: {concat_df.size}</h5>
                 </div>
                 """,
                 unsafe_allow_html=True
                 )
+            
+            col1,col2,col3 = st.columns(3)
+            with col1:
+                st.markdown(f"#### Churn Rate: {(concat_df['Churn'].value_counts(normalize = True).get('Yes', 0)* 100):.2f}%")
+                st.markdown(f"#### Average Tenure (Months) : {concat_df['tenure'].mean():.2f}")
+
+            with col2:
+                    st.markdown(f"#### Count of Churned Customers : {concat_df['Churn'].value_counts().get('Yes')}")
+                    st.markdown(f"#### Count of Retained Customers : {concat_df['Churn'].value_counts().get('No')}")
+
+            with col3:
+                    st.markdown(f"#### Average Total Charges: ${concat_df['TotalCharges'].mean():.2f}")
+                    st.markdown(f"#### Average Monthly Charges: ${concat_df['MonthlyCharges'].mean():.2f}")
+                        
 
 #@st.cache_data()
 def eda_dashboard():
@@ -101,10 +110,10 @@ def eda_dashboard():
         
 #@st.cache_data()
 def kpi_dashboard():    
+    final_indicator()
+    
     st.subheader('Bivariate Analysis')
 
-    final_indicator()
- 
     col1, col2, col3 = st.columns(3)
     with col1:
         fig4 = px.histogram(concat_df, x='Churn', color='Churn', color_discrete_map={'Yes':'turquoise', 'No':'slateblue'}, title='Number of Churned Customers')
@@ -194,15 +203,23 @@ def kpi_dashboard():
 
 
             
-if __name__ == '__main__':
-    st.title('Dashboard')
-
+if st.session_state['authentication_status']:
+    authenticator.logout(location='sidebar')
     col1, col2 = st.columns(2)
     with col1:
-        pass
+        st.image('resources/dashb1.jpg', width=200)
+        st.title('Dashboard')
+        if st.checkbox('Show data'):
+            st.subheader('Telco churn data')
+            st.write(concat_df)
+
     with col2:
+        st.title(':rainbow-background[EDA & Dashboard]')
         st.selectbox('Select Dashboard', options=['EDA', 'KPI'], key='selected_dashboard')
     if st.session_state['selected_dashboard'] == 'EDA':
         eda_dashboard()
     elif st.session_state['selected_dashboard'] == 'KPI':
         kpi_dashboard()
+
+else:
+    st.info('Login to gain access to the app')

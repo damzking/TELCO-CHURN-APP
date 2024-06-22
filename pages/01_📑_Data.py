@@ -2,6 +2,9 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+import streamlit_authenticator as stauth
+import yaml
+from yaml.loader import SafeLoader
 
 st.set_page_config(
     page_title='Data Page',
@@ -9,12 +12,16 @@ st.set_page_config(
     layout='wide'
 )
 
+with open('.streamlit/config.yaml') as file:
+    config = yaml.load(file, Loader=SafeLoader)
 
-col1, col2 = st.columns(2)
-with col2:
-    st.write('### :rainbow-background[Telco Customer Churn Data ]🗃')
-with col1:
-    st.image('resources/imagesdata.jfif', width=300)
+authenticator = stauth.Authenticate(
+    config['credentials'],
+    config['cookie']['name'],
+    config['cookie']['key'],
+    config['cookie']['expiry_days'],
+    config['pre-authorized']
+)
 
 @st.cache_data
 def load_data0():
@@ -139,18 +146,14 @@ def data_dict():
  - **TotalCharges**      - Yearly customer charges
  - **Churn**             - Whether a customer will stop using the Telco's network or not (Yes and No)
         """)
-
-if __name__ == '__main__':
     
-    #select_data()
-    
-    #data_description()
-    #st.title('Dashboard')
-    
+if st.session_state['authentication_status']:
+    authenticator.logout(location='sidebar')
     col1, col2 = st.columns(2)
     with col1:
-        pass
+        st.image('resources/imagesdata.jfif', width=300)
     with col2:
+        st.write('### :rainbow-background[Telco Customer Churn Data ]🗃')
         st.selectbox('Select DataFrame/Descriptive statistics', options=['Data', 'Statistics'], key='selected_dataframe')
     if st.session_state['selected_dataframe'] == 'Data':
             select_data() 
@@ -158,4 +161,8 @@ if __name__ == '__main__':
             data_description()
             
     data_dict()
+
+else:
+    st.info('Login to gain access to the app')
+
             
