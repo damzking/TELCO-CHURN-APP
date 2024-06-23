@@ -4,8 +4,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.pyplot as plt
 import seaborn as sns
-
 import plotly.express as px
+import streamlit_authenticator as stauth
+import yaml
+from yaml.loader import SafeLoader
 
 st.set_page_config(
     page_title = 'Dashboard Page',
@@ -13,11 +15,18 @@ st.set_page_config(
     layout = 'wide'
 )
 
-col1, col2 = st.columns(2)
-with col1:
-    st.image('resources/dashb1.jpg', width=200)
-with col2:
-    st.title(':rainbow-background[EDA & Dashboard]')
+
+with open('.streamlit/config.yaml') as file:
+    config = yaml.load(file, Loader=SafeLoader)
+
+authenticator = stauth.Authenticate(
+    config['credentials'],
+    config['cookie']['name'],
+    config['cookie']['key'],
+    config['cookie']['expiry_days'],
+    config['pre-authorized']
+)
+
 
 @st.cache_data()
 def load_concat_data():
@@ -26,14 +35,34 @@ def load_concat_data():
 
 concat_df = load_concat_data()
 
-if st.checkbox('Show data'):
-    st.subheader('Telco churn data')
-    st.write(concat_df)
+def final_indicator():
+            st.markdown(f"""
+                <div style= "background-color: turquoise; border-radius: 10px; width: 60%; margin-top: 20px;" >
+                    <h3 style="margin-left: 30px">Quick Stats About Dataset</h3>
+                    <hr>
+                </div>
+                """,
+                unsafe_allow_html=True
+                )
+            
+            col1,col2,col3 = st.columns(3)
+            with col1:
+                st.caption(f"###### Churn Rate: :orange[**{(concat_df['Churn'].value_counts(normalize = True).get('Yes', 0)* 100):.2f}%**]")
+                st.caption(f"###### Average Tenure (Months) : :orange[**{concat_df['tenure'].mean():.2f}**]")
 
-@st.cache_data()
+            with col2:
+                    st.caption(f"###### Count of Churned Customers : :orange[**{concat_df['Churn'].value_counts().get('Yes')}**]")
+                    st.caption(f"###### Count of Retained Customers : :orange[**{concat_df['Churn'].value_counts().get('No')}**]")
+
+            with col3:
+                    st.caption(f"###### Average Total Charges: :orange[**${concat_df['TotalCharges'].mean():.2f}**]")
+                    st.caption(f"###### Average Monthly Charges: :orange[**${concat_df['MonthlyCharges'].mean():.2f}**]")
+            st.write('---')      
+
+#@st.cache_data()
 def eda_dashboard():
     
-    st.subheader(' Univariate Analysis')
+    st.subheader(' Exploratory Data Analysis')
     col1, col2, col3 = st.columns(3)
 
     with col1:
@@ -60,11 +89,11 @@ def eda_dashboard():
     
     col1, col2 = st.columns(2)
     with col1:
-        fignum = px.histogram(concat_df.select_dtypes(include=np.number), barmode='overlay', title='Number of Churned Customers')
+        fignum = px.histogram(concat_df.select_dtypes(include=np.number), barmode='overlay', title='Distribution of Tenure, Monthly Charges & Total Charges')
         st.plotly_chart(fignum)
         
     with col2:
-        figcat = px.box(concat_df.select_dtypes(include=np.number), title='Number of Churned Customers')
+        figcat = px.box(concat_df.select_dtypes(include=np.number), title='Boxplot of Numerical Variables')
         st.plotly_chart(figcat)
     
     sns.set(style="ticks")
@@ -79,9 +108,12 @@ def eda_dashboard():
             label.set_rotation(45)
     st.pyplot(pairplot)
         
-@st.cache_data()
+#@st.cache_data()
 def kpi_dashboard():    
-    st.subheader('Bivariate Analysis')    
+    final_indicator()
+    
+    
+    st.subheader('KPI Analysis')
     col1, col2, col3 = st.columns(3)
     with col1:
         fig4 = px.histogram(concat_df, x='Churn', color='Churn', color_discrete_map={'Yes':'turquoise', 'No':'slateblue'}, title='Number of Churned Customers')
@@ -164,20 +196,30 @@ def kpi_dashboard():
     with col1:
         kpi1 = px.bar(concat_df, x='Dependents', y= 'tenure', color='Churn', color_discrete_map={'Yes':'turquoise', 'No':'slateblue'}, title='Customers with Dependents and Churn')
         st.plotly_chart(kpi1)
-    #with col2 and col3:
-        
-    kp2 = sns.catplot(data=concat_df, x='gender', y='tenure', hue='Churn', kind='bar', col='PaymentMethod', aspect=.7, palette=['blue', 'red'])
-    st.pyplot(kp2)
-            
-if __name__ == '__main__':
-    st.title('Dashboard')
     
+    with col2 and col3:
+        kp2 = sns.catplot(data=concat_df, x='gender', y='tenure', hue='Churn', kind='bar', col='PaymentMethod', aspect=.7, palette=['blue', 'red'])
+        st.pyplot(kp2)
+
+
+            
+if st.session_state['authentication_status']:
+    authenticator.logout(location='sidebar')
     col1, col2 = st.columns(2)
     with col1:
-        pass
+        st.image('resources/dashb1.jpg', width=200)
+        st.title('Dashboard')
+        if st.checkbox('Show data'):
+            st.subheader('Telco churn data')
+            st.write(concat_df)
+
     with col2:
+        st.title(':rainbow-background[EDA & Dashboard]')
         st.selectbox('Select Dashboard', options=['EDA', 'KPI'], key='selected_dashboard')
     if st.session_state['selected_dashboard'] == 'EDA':
         eda_dashboard()
     elif st.session_state['selected_dashboard'] == 'KPI':
         kpi_dashboard()
+
+else:
+    st.info('Login to gain access to the app')
