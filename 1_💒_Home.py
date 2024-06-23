@@ -9,8 +9,12 @@ st.set_page_config(
     layout='wide'
 )
 
+
 def background():
-    st.image('resources/brainchart.webp', width=200)
+    col1, col2, col3 = st.columns(3)
+    with col2:
+        st.image('resources/brainchart.webp', width=200)
+    
     st.header(":gray-background[Welcome to :rainbow[Telco Customer Churn Prediction App]]")
     with st.container():
         st.write('### :rainbow[Telco Customer Churn Overview]')
@@ -130,7 +134,7 @@ elif st.session_state['authentication_status'] is False:
     st.info('Invalid Email/Password')
 
 elif st.session_state['authentication_status'] is None:
-    st.info('Create an account to get access to the app')
+    st.info('Please use test account below to get access to the app')
     if st.sidebar.button('Create Password'):
             st.session_state['Create Password'] = True
     if st.session_state.get('Create Password'):
@@ -157,7 +161,7 @@ elif st.session_state['authentication_status'] is None:
     
     st.code("""
             Test Account
-            Username: bamzzyy
-            Password: 10101
+            Username: guser
+            Password: guestuser
             """)
     

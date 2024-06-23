@@ -192,15 +192,15 @@ if st.session_state['authentication_status']:
 
         with col1:
             if final_prediction == "Yes":
-                st.write("### Churned :green[Yes]\nCustomer is likely to churn")
+                st.write("### Churned? :red[Yes]\nCustomer is likely to churn")
             else: 
-                st.write(f'### Not Churned :red[No]\nCustomer is not likely to churn')     
+                st.write(f'### Churned? :green[No]\nCustomer is not likely to churn')     
         with col2:
             st.subheader('@ What Probability?')
             if final_prediction == 'No':
-                st.write(f'#### :red[{round((st.session_state["probability"][0]*100),2)}%] chance of customer not churning.')
+                st.write(f'#### :green[{round((st.session_state["probability"][0]*100),2)}%] chance of customer not churning.')
             else:
-                st.write(f'#### :green[{round((st.session_state["probability"][1]*100),2)}%] chance of customer churning.')
+                st.write(f'#### :red[{round((st.session_state["probability"][1]*100),2)}%] chance of customer churning.')
 
 
 else:
