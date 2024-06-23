@@ -93,7 +93,7 @@ def eda_dashboard():
         st.plotly_chart(fignum)
         
     with col2:
-        figcat = px.box(concat_df.select_dtypes(include=np.number), title='Number of Churned Customers')
+        figcat = px.box(concat_df.select_dtypes(include=np.number), title='Boxplot of Numerical Variables')
         st.plotly_chart(figcat)
     
     sns.set(style="ticks")
