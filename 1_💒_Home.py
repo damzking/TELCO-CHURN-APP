@@ -1,7 +1,7 @@
 import streamlit as st
-import firebase_admin
-from firebase_admin import credentials
-from firebase_admin import auth
+import streamlit_authenticator as stauth
+import yaml
+from yaml.loader import SafeLoader
 
 st.set_page_config(
     page_title='Home Page',
@@ -9,139 +9,9 @@ st.set_page_config(
     layout='wide'
 )
 
-
-col1, col2, col3 = st.columns(3)
-with col2:
-    st.image('resources/brainchart.webp', width=200)
-st.header(":gray-background[Welcome to :rainbow[Telco Customer Churn Prediction App]]")
- 
-# Check if the default Firebase app is already initialized
-if not firebase_admin._apps:
-    cred = credentials.Certificate('.streamlit/telco-customer-churn-predict-f7f9ee24bfdc.json')
-    firebase_admin.initialize_app(cred)
- 
-#def initialize_session_state():
-#    if 'signedout' not in st.session_state:
-#        st.session_state.signedout = False
-#    if 'signout' not in st.session_state:
-#        st.session_state.signout = False
-#    if 'username' not in st.session_state:
-#        st.session_state.username = ''
-#    if 'useremail' not in st.session_state:
-#        st.session_state.useremail = ''
- 
-#def sign_out():
-#    st.session_state.signedout = False
-#    st.session_state.signout = False
-#    st.session_state.username = ''
-#    st.session_state.useremail = ''
-
-
-def initialize_session_state():
-    if 'signedout' not in st.session_state:
-        st.session_state.signedout = False
-    if 'sign_in' not in st.session_state:
-        st.session_state.sign_in = False
-    if 'username' not in st.session_state:
-        st.session_state.username = ''
-    if 'useremail' not in st.session_state:
-        st.session_state.useremail = ''
-
-def sign_out():
-    st.session_state.signedout = False
-    st.session_state.sign_in = False
-    st.session_state.username = ''
-    st.session_state.useremail = ''
-
-def app():
-    initialize_session_state()
- 
-    col1, col2 = st.columns(2)
- 
-    with col1:
-        st.write('## How to run application')
-        st.code('''
-        # activate virtual environment
-        env/scripts/activate
-        streamlit run home.py
-        ''')
-        st.link_button('Repository on Github', url='https://github.com/Koanim/LP4-Telco-Customer-Churn-Prediction-APP')
-        def sign_in():
-            st.session_state.sign_in = True
-            login_button = True
-            return login_button
-        def sign_up():
-            st.session_state.sign_up = True
-            signup_button = True
-            return signup_button
-            
-        if not st.session_state.signedout:
-            col3, col4 = st.columns(2)
-            with col3:
-                def login_form():
-                    email_address = st.text_input('Email Address')
-                    password = st.text_input('Password', type='password')
-                    st.form_submit_button('Login', on_click=login_button)
-            with col4:
-                def signup_form():
-                    username = st.text_input('Username')
-                    password = st.text_input('Password', type='password')
-                    email_address = st.text_input('Email Address')
-                    st.form_submit_button('Sign Up', on_click=signup_button)
-            
-                #if login == 'Login':
-                    #with st.form("login_form"):
-                     #   email_address = st.text_input('Email Address')
-                     #   password = st.text_input('Password', type='password')
-                     #   login_button = st.form_submit_button('Login')
- 
-                def login_button():
-                    try:
-                        user = auth.get_user_by_email(email_address)
-                        st.write('Login Successfully')
-                        st.session_state.username = user.uid
-                        st.session_state.useremail = user.email
-                        st.session_state.signedout = True
-                        st.session_state.sign_in = True
-                    except Exception as e:
-                        if st.session_state.useremail != user.email:
-                            st.warning('Invalid email')
-                        else:
-                            st.warning('Invalid password')
- 
-                #if signup == 'SignUp':
-                 #   with st.form("signup_form"):
-                  #      username = st.text_input('Username')
-                   #     password = st.text_input('Password', type='password')
-                    #    email_address = st.text_input('Email Address')
-                     #   signup_button = st.form_submit_button('SignUp')
-
-                def signup_button():
-                    try:
-                        user = auth.create_user(email=email_address, password=password, uid=username)
-                        st.success(f'Signed up as {username}')
-                        st.markdown('Please Login using your email and password')
-                        st.balloons()
-                    except Exception as e:
-                        st.warning('Please enter a valid email address')
-                        
-        else:
-            st.text('Name: ' + st.session_state.username)
-            st.text('Email Id: ' + st.session_state.useremail)
-            st.button('Sign out', on_click=sign_out)
-            st.write("### You are signed Out!")
-            st.write("Now you can use the app to predict customer churn.")
-
-    with col2:
-        with st.container():
-            st.write('## :violet[Predict Customer Churn]')
-            st.write('### About Us')
-            st.write("This App's aim is to use Machine learning Algorithm to predict whether a new Telco customer will churn or not churn. To understand the dataset and find the lifeline value of each customer and determine which factors affect the rate at which customers stop using their network.")
-            st.write('### Feedback Form')
-            st.write('If you have any feedback, please contact us via telco@churnapp.com.')
-
-
 def background():
+    st.image('resources/brainchart.webp', width=200)
+    st.header(":gray-background[Welcome to :rainbow[Telco Customer Churn Prediction App]]")
     with st.container():
         st.write('### :rainbow[Telco Customer Churn Overview]')
         
@@ -217,10 +87,77 @@ def background():
 
 7.  The average number of churn for customers that have **Yes** values for **seniorCitizen** is greater than or equal to those with **No** values.
                 """)
+        
+    st.write('#### Feedback')
+    st.write(' Contact us on info@customerpredict.com for more enquiry' )
 
-#col1, col2, col3 = st.columns(3)
+with open('.streamlit/config.yaml') as file:
+    config = yaml.load(file, Loader=SafeLoader)
 
-if __name__ == "__main__":
-    app()
-    
+authenticator = stauth.Authenticate(
+    config['credentials'],
+    config['cookie']['name'],
+    config['cookie']['key'],
+    config['cookie']['expiry_days'],
+    config['pre-authorized']
+)
+
+name, authentication_status, username = authenticator.login(location = 'sidebar')
+
+
+if st.session_state['authentication_status']:
+    authenticator.logout(location='sidebar')
+    st.sidebar.write(f'welcome {username}')
+    if st.sidebar.button('Reset Password'):
+            st.session_state['reset_password'] = True
+    if st.session_state.get('reset_password'):
+        with st.form('reset_password_form'):
+            new_password = st.text_input('Enter new password')
+            confirm_password = st.text_input('Confirm new password', type='password') 
+            if st.form_submit_button('Reset'):
+                if new_password == confirm_password:
+                    try:
+                        if authenticator.reset_password(st.session_state["username"], new_password, location='sidebar'):
+                            st.session_state['reset_password'] = False
+                            st.success('Password modified successfully')
+                    except Exception as e:
+                        st.error(e)
+                else:
+                    st.error('Passwords do not match')
     background()
+
+elif st.session_state['authentication_status'] is False:
+    st.info('Invalid Email/Password')
+
+elif st.session_state['authentication_status'] is None:
+    st.info('Create an account to get access to the app')
+    if st.sidebar.button('Create Password'):
+            st.session_state['Create Password'] = True
+    if st.session_state.get('Create Password'):
+            with st.form('Create account'):
+                name = st.text_input('Enter your name')
+                username = st.text_input('Enter your username')
+                email = st.text_input('Enter your email')
+                password = st.text_input('Enter your password', type='password')
+                confirm_password = st.text_input('Confirm password', type='password')
+                if st.form_submit_button('Register'):
+                    if password == confirm_password:
+                        try:
+                            email_of_registered_user, username_of_registered_user, name_of_registered_user = authenticator.register_user(name, username, email, password, pre_authorization=False, location ='sidebar')
+                            if email_of_registered_user:
+                                st.success('User registered successfully')
+                                st.ballons()
+                                st.session_state['Create Password'] = False
+                        except Exception as e:
+                            st.error(e)
+                    else:
+                        st.error('Passwords do not match')   
+
+
+    
+    st.code("""
+            Test Account
+            Username: bamzzyy
+            Password: 10101
+            """)
+    

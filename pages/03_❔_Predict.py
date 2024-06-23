@@ -9,7 +9,9 @@ from catboost import CatBoostClassifier
 from xgboost import XGBClassifier
 import os
 import datetime
-
+import streamlit_authenticator as stauth
+import yaml
+from yaml.loader import SafeLoader
 
 
 st.set_page_config(
@@ -18,12 +20,17 @@ st.set_page_config(
     layout='wide'
 )
 
-col1, col2 = st.columns(2)
 
-with col1:
-    st.image('resources/churn image.png', width=200)
-with col2:
-    st.header(':rainbow-background[Will customer Churn?]')
+with open('.streamlit/config.yaml') as file:
+    config = yaml.load(file, Loader=SafeLoader)
+
+authenticator = stauth.Authenticate(
+    config['credentials'],
+    config['cookie']['name'],
+    config['cookie']['key'],
+    config['cookie']['expiry_days'],
+    config['pre-authorized']
+)
 
 
 st.cache_resource()
@@ -104,16 +111,20 @@ def make_prediction(pipeline, encoder):
     st.session_state['prediction'] = prediction
     st.session_state['probability'] = probability
     
-    df['Prediction'] = prediction
+    # Save results
+   
+    df['prediction'] = prediction
     if prediction == 'No':
         df['Probability'] = st.session_state["probability"][0]
     else:
         df['Probability'] = st.session_state["probability"][1]
-    df['model'] = st.session_state['selected_model']
     
-    df.to_csv('./Data/history.csv', mode='a', index=False, header=False)
-    
-    return prediction
+    df['model_used'] = st.session_state['selected_model']
+
+    history_file_path = 'Data/history.csv'
+    df.to_csv(history_file_path, mode='a', header=not os.path.exists(history_file_path), index=False)
+
+    return prediction , probability
 
 
 if 'prediction' not in st.session_state:
@@ -162,34 +173,35 @@ def display_form():
         st.form_submit_button('Submit', on_click=make_prediction, kwargs=dict(pipeline=pipeline, encoder=encoder)) #st.form_submit_button('Predict', on_click=make_prediction, kwargs=dict(pipeline=pipeline, encoder=encoder)) 
 
 
+if st.session_state['authentication_status']:    
+    authenticator.logout(location='sidebar')
+    col1, col2 = st.columns(2)
+    with col1:
+        st.image('resources/churn image.png', width=200)
+    with col2:
+        st.header(':rainbow-background[Will customer Churn?]')
 
-if __name__ == '__main__':
-    
     display_form()
     
-    prediction = st.session_state['prediction']
-    probability = st.session_state['probability']
-
-    #st.write(st.session_state["probability"][0])
-    #st.write(st.session_state["prediction"])
-    
-    if not st.session_state['prediction']:
+    final_prediction = st.session_state['prediction']
+    if not final_prediction:
         st.write('### Prediction show here')
         
     else:
         col1, col2 = st.columns(2)
-        
+
         with col1:
-            
-            if st.session_state["prediction"] == "Yes":
-                st.write("### Churned :red[Yes]\nCustomer is likely to churn")
+            if final_prediction == "Yes":
+                st.write("### Churned :green[Yes]\nCustomer is likely to churn")
             else: 
-                st.write(f'### Not Churned :green[No]\nCustomer is not likely to churn')     
+                st.write(f'### Not Churned :red[No]\nCustomer is not likely to churn')     
         with col2:
             st.subheader('@ What Probability?')
-            if prediction == 'No':
-                st.write(f'#### :green[{round((st.session_state["probability"][0]*100),2)}%] chance of customer not churning.')
+            if final_prediction == 'No':
+                st.write(f'#### :red[{round((st.session_state["probability"][0]*100),2)}%] chance of customer not churning.')
             else:
-                st.write(f'#### :red[{round((st.session_state["probability"][1]*100),2)}%] chance of customer churning.')
+                st.write(f'#### :green[{round((st.session_state["probability"][1]*100),2)}%] chance of customer churning.')
 
-#st.write(st.session_state)
+
+else:
+    st.info('Login to gain access to the app')

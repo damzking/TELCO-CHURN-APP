@@ -1,3 +1,5 @@
+gender,SeniorCitizen,Partner,Dependents,tenure,PhoneService,MultipleLines,InternetService,OnlineSecurity,OnlineBackup,DeviceProtection,TechSupport,StreamingTV,StreamingMovies,Contract,PaperlessBilling,PaymentMethod,MonthlyCharges,TotalCharges,prediction,Probability,model_used
+Female,Yes,Yes,Yes,10,Yes,Yes,DSL,Yes,No,Yes,Yes,Yes,Yes,Month-to-month,No,Electronic check,100.0,1000.0,No,0.5880092,XGBoost
 gender,SeniorCitizen,Partner,Dependents,tenure,PhoneService,MultipleLines,InternetService,OnlineSecurity,OnlineBackup,DeviceProtection,TechSupport,StreamingTV,StreamingMovies,Contract,PaperlessBilling,PaymentMethod,MonthlyCharges,TotalCharges,Prediction,Probability,model
 Male,Yes,Yes,Yes,0,Yes,Yes,DSL,Yes,Yes,Yes,Yes,Yes,Yes,Month-to-month,Yes,Electronic check,0.0,0.0,No,0.8700058,XGBoost
 Male,Yes,Yes,Yes,0,Yes,Yes,DSL,Yes,Yes,Yes,Yes,Yes,Yes,Month-to-month,Yes,Electronic check,0.0,0.0,No,0.6516610887762377,Gradient Boosting
@@ -58,3 +60,4 @@ Male,Yes,Yes,Yes,0,Yes,Yes,DSL,Yes,Yes,Yes,Yes,Yes,Yes,Month-to-month,Yes,Electr
 Female,No,No,Yes,0,Yes,No,DSL,Yes,Yes,Yes,Yes,Yes,Yes,Month-to-month,Yes,Electronic check,0.0,0.0,No,0.85724497,XGBoost
 Male,Yes,Yes,Yes,0,Yes,Yes,DSL,Yes,Yes,Yes,Yes,Yes,Yes,Month-to-month,Yes,Electronic check,0.0,0.0,No,0.8700058,XGBoost
 Male,Yes,Yes,Yes,0,Yes,Yes,DSL,Yes,Yes,Yes,Yes,Yes,Yes,Month-to-month,Yes,Electronic check,0.0,0.0,No,0.8700058,XGBoost
+Female,Yes,Yes,Yes,7,Yes,Yes,DSL,No,Yes,No,Yes,Yes,Yes,Month-to-month,No,Electronic check,100.0,7000.0,No,0.7959533,XGBoost
