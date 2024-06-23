@@ -155,7 +155,7 @@ elif st.session_state['authentication_status'] is None:
                         except Exception as e:
                             st.error(e)
                     else:
-                        st.error('Passwords do not match')   
+                        st.error('😕 Password incorrect')   
 
 
     
