@@ -89,7 +89,7 @@ def eda_dashboard():
     
     col1, col2 = st.columns(2)
     with col1:
-        fignum = px.histogram(concat_df.select_dtypes(include=np.number), barmode='overlay', title='Number of Churned Customers')
+        fignum = px.histogram(concat_df.select_dtypes(include=np.number), barmode='overlay', title='Distribution of Tenure, Monthly Charges & Total Charges')
         st.plotly_chart(fignum)
         
     with col2:
