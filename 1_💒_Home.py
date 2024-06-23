@@ -43,6 +43,7 @@ def background():
                     st.caption('The predict page takes responses based on following variables :orange[gender, SeniorCitizen, Partner, Dependents, tenure, PhoneService, MultipleLines, InternetService, OnlineSecurity, OnlineBackup, DeviceProtection, TechSupport, StreamingTV, StreamingMovies, Contract, PaperlessBilling, PaymentMethod, MonthlyCharges, TotalCharges], then you can select which model you prefer to run your prediction ')
                 with st.expander(':violet[**History page**]'):
                     st.caption('This page keeps the records of all predictions made by this app, these data will be valuable to determine if our models needs improvement, as well as understand which model is predicting more accurately')
+                
                 st.write("""#### Contact Me 📧""")
                 st.caption(""" 
                         - For Help with this app
@@ -51,8 +52,11 @@ def background():
                         
                         email me via victor.nyarko@ymail.com
                         """)
+                st.caption('For more information about me, checkout my!')
+                st.write(':red[[GitHub](https://github.com/Koanim/LP4-Telco-Customer-Churn-Prediction-APP), [LinkdIn](https://www.linkedin.com/in/victor-anim-83115818/), [Medium]()] pages')
+                
         with col2:                    
-            st.write('### :rainbow[ Telco Churn Overview]')
+            st.write('#### :rainbow[ Telco Churn Overview]')
         
             st.write("""In the 2022 State of Customer Churn in Telecom survey, it was found that customer loyalty to telecom providers is down 22% post-pandemic, with customer stickiness being impacted more by the customer experience than ever. 
         Further, customers are now more price sensitive, with 58% perceiving telco offerings as expensive.
@@ -75,7 +79,7 @@ def background():
             col1, col2 = st.columns(2)
             with col1:
                 with st.container():
-                    with st.expander("#### :rainbow[ANALYTICAL QUESTIONS]"):
+                    with st.expander("###### :rainbow[ANALYTICAL QUESTIONS]"):
                         st.write("""
                     The following analytical questions will help us gain insight and as well as confirm our hypothesis
 
@@ -102,7 +106,7 @@ def background():
 10. What is the trend between Contract and Payment Method in relation to churn
                 """)
             with col2:
-                with st.expander("#### :rainbow[HYPOTHESIS]"):
+                with st.expander("###### :rainbow[HYPOTHETICAL QUESTIONS]"):
                     st.write("""
         The following hypothesis will be tested
 
