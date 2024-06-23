@@ -62,3 +62,7 @@ Male,Yes,Yes,Yes,0,Yes,Yes,DSL,Yes,Yes,Yes,Yes,Yes,Yes,Month-to-month,Yes,Electr
 Male,Yes,Yes,Yes,0,Yes,Yes,DSL,Yes,Yes,Yes,Yes,Yes,Yes,Month-to-month,Yes,Electronic check,0.0,0.0,No,0.8700058,XGBoost
 Female,Yes,Yes,Yes,7,Yes,Yes,DSL,No,Yes,No,Yes,Yes,Yes,Month-to-month,No,Electronic check,100.0,7000.0,No,0.7959533,XGBoost
 Male,Yes,Yes,Yes,0,Yes,Yes,DSL,Yes,Yes,Yes,Yes,Yes,Yes,Month-to-month,Yes,Electronic check,0.0,0.0,No,0.8700058,XGBoost
+Male,No,No,No,5,No,No,DSL,No,No,No,No,No,No,Month-to-month,Yes,Electronic check,23.0,100.0,Yes,0.58060133,XGBoost
+Male,No,No,No,5,No,No,DSL,No,No,No,No,No,No,Month-to-month,Yes,Electronic check,23.0,100.0,Yes,0.583948011513445,Gradient Boosting
+Male,No,No,No,5,No,No,DSL,No,No,No,No,No,No,Month-to-month,Yes,Electronic check,23.0,100.0,Yes,0.583948011513445,Category Boosting
+Male,No,No,No,5,No,No,DSL,No,No,No,No,No,No,Month-to-month,Yes,Electronic check,23.0,100.0,Yes,0.58060133,XGBoost
