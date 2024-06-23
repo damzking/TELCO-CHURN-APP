@@ -47,22 +47,22 @@ def final_indicator():
             
             col1,col2,col3 = st.columns(3)
             with col1:
-                st.markdown(f"#### Churn Rate: {(concat_df['Churn'].value_counts(normalize = True).get('Yes', 0)* 100):.2f}%")
-                st.markdown(f"#### Average Tenure (Months) : {concat_df['tenure'].mean():.2f}")
+                st.caption(f"###### Churn Rate: :orange[**{(concat_df['Churn'].value_counts(normalize = True).get('Yes', 0)* 100):.2f}%**]")
+                st.caption(f"###### Average Tenure (Months) : :orange[**{concat_df['tenure'].mean():.2f}**]")
 
             with col2:
-                    st.markdown(f"#### Count of Churned Customers : {concat_df['Churn'].value_counts().get('Yes')}")
-                    st.markdown(f"#### Count of Retained Customers : {concat_df['Churn'].value_counts().get('No')}")
+                    st.caption(f"###### Count of Churned Customers : :orange[**{concat_df['Churn'].value_counts().get('Yes')}**]")
+                    st.caption(f"###### Count of Retained Customers : :orange[**{concat_df['Churn'].value_counts().get('No')}**]")
 
             with col3:
-                    st.markdown(f"#### Average Total Charges: ${concat_df['TotalCharges'].mean():.2f}")
-                    st.markdown(f"#### Average Monthly Charges: ${concat_df['MonthlyCharges'].mean():.2f}")
-                        
+                    st.caption(f"###### Average Total Charges: :orange[**${concat_df['TotalCharges'].mean():.2f}**]")
+                    st.caption(f"###### Average Monthly Charges: :orange[**${concat_df['MonthlyCharges'].mean():.2f}**]")
+            st.write('---')      
 
 #@st.cache_data()
 def eda_dashboard():
     
-    st.subheader(' Univariate Analysis')
+    st.subheader(' Exploratory Data Analysis')
     col1, col2, col3 = st.columns(3)
 
     with col1:
@@ -112,8 +112,8 @@ def eda_dashboard():
 def kpi_dashboard():    
     final_indicator()
     
-    st.subheader('Bivariate Analysis')
-
+    
+    st.subheader('KPI Analysis')
     col1, col2, col3 = st.columns(3)
     with col1:
         fig4 = px.histogram(concat_df, x='Churn', color='Churn', color_discrete_map={'Yes':'turquoise', 'No':'slateblue'}, title='Number of Churned Customers')

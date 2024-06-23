@@ -11,22 +11,57 @@ st.set_page_config(
 
 
 def background():
+    st.header(":gray-background[Welcome to :rainbow[Telco Customer Churn Prediction App]]")
+    
     col1, col2, col3 = st.columns(3)
+    with col1:
+        st.caption('My First Machine Learning App 🎉')
     with col2:
         st.image('resources/brainchart.webp', width=200)
-    
-    st.header(":gray-background[Welcome to :rainbow[Telco Customer Churn Prediction App]]")
+    with col3:
+        pass
     with st.container():
-        st.write('### :rainbow[Telco Customer Churn Overview]')
+        col1, col2 = st.columns(2)
+        with col1:
+            with st.container():
+                st.write('#### About App')
+                st.caption(
+                    "This APP will help a Telco determine whether an existing customer or a new customer is likely to churn, based on customer response,\
+                    using three different trained Machine learning Model pipelines, these pipelines include :orange[**XGBoost, Category boosting and Gradient boosting**].")
+                st.caption("\nThis will help the Telco understand the lifeline value of each customer and determine which factors affect the rate at which customers will stop using their network.")
+                st.caption("\nA History of this App will store all predictions made, this data can be used later to determine whether and which of the models is predicting well, for future improvement"
+                        )
+                st.write("""#### Key Features of App """)
+                #st.caption(":violet[Data page] - ")
+                with st.expander(":violet[**Data Page**] -"):
+                    st.caption('This page contains the datasets used to train our machine learning models, as well as the statistics, the Datasets were acquired from SQL server and a GitHub repository, they were cleaned and merged before modeling ')
+                with st.expander(":violet[**Dashboard Page**] -"):
+                    st.caption('The dashboard page is made of two visualizations types')
+                    st.caption('EDA (Exploratory Data Analysis) Visualizations helps to understand characteristics of the various variables in the datasets, this also will help us understand the distribution of the datasets')
+                    st.caption('KPI - these visualizations helps us answer some specific questions, especially in relation to the target variable, in this case :red[Churn]. This help understand how other variables affect :red[Churn]')
+                with st.expander(":violet[**Predict Page**] -"):
+                    st.caption('The predict page takes responses based on following variables :orange[gender, SeniorCitizen, Partner, Dependents, tenure, PhoneService, MultipleLines, InternetService, OnlineSecurity, OnlineBackup, DeviceProtection, TechSupport, StreamingTV, StreamingMovies, Contract, PaperlessBilling, PaymentMethod, MonthlyCharges, TotalCharges], then you can select which model you prefer to run your prediction ')
+                with st.expander(':violet[**History page**]'):
+                    st.caption('This page keeps the records of all predictions made by this app, these data will be valuable to determine if our models needs improvement, as well as understand which model is predicting more accurately')
+                st.write("""#### Contact Me 📧""")
+                st.caption(""" 
+                        - For Help with this app
+                        - For Collaboration on a different project
+                        - For feedback and Enquiry
+                        
+                        email me via victor.nyarko@ymail.com
+                        """)
+        with col2:                    
+            st.write('### :rainbow[ Telco Churn Overview]')
         
-        st.write("""In the 2022 State of Customer Churn in Telecom survey, it was found that customer loyalty to telecom providers is down 22% post-pandemic, with customer stickiness being impacted more by the customer experience than ever. 
+            st.write("""In the 2022 State of Customer Churn in Telecom survey, it was found that customer loyalty to telecom providers is down 22% post-pandemic, with customer stickiness being impacted more by the customer experience than ever. 
         Further, customers are now more price sensitive, with 58% perceiving telco offerings as expensive.
         [Source](https://techsee.com/resources/reports/state-of-customer-churn-telecom-survey-report/)""")
 
-        st.markdown("""  Some reasons for churn in telecoms
+            st.markdown("""  Some reasons for churn in telecoms
         It emerged that churn in the telecom industry is most often due to high customer effort. Customers canceled their contracts for the following reasons:""")
 
-        st.write("""    
+            st.write("""    
             1. Companies wasted their time (37% waited too long to have their issue resolved)
             2. They had to call more than once (51%)
             3. Untrained or incompetent agents (37% thought the reps were rude or had a negative approach)
@@ -36,18 +71,12 @@ def background():
             Machine learning can be a powerful tool for telcos to predict customer churn and keep their customer base. ML is used across many industries, and its application in the telecommunications industry is no different. Machine learning is one way of achieving artificial intelligence.
             [Source](https://www.akkio.com/beginners-guide-to-machine-learning?utm_source=Akkio&utm_medium=content-marketing&utm_content=telecom-customer-churn)
             """)
-    with st.container():
-        st.write('### :rainbow[Project Objectives]')
-        st.write("""
-                
-- In this project, task is to develop a Classification Machine learning model to predict whether a new Telco customer will churn or not churn.
-- To understand the dataset and find the lifeline value of each cutomer and determine which factors affect the rate at which customers stop using their network.
-                """)
-    col1, col2 = st.columns(2)
-    with col1:
-        with st.container():
-            st.write("#### :rainbow[ANALYTICAL QUESTIONS]")
-            st.write("""
+            
+            col1, col2 = st.columns(2)
+            with col1:
+                with st.container():
+                    with st.expander("#### :rainbow[ANALYTICAL QUESTIONS]"):
+                        st.write("""
                     The following analytical questions will help us gain insight and as well as confirm our hypothesis
 
 1. How long Female and Male spent with Telco before Churning
@@ -72,9 +101,9 @@ def background():
 
 10. What is the trend between Contract and Payment Method in relation to churn
                 """)
-    with col2:
-        st.write("#### :rainbow[HYPOTHESIS]")
-        st.write("""
+            with col2:
+                with st.expander("#### :rainbow[HYPOTHESIS]"):
+                    st.write("""
         The following hypothesis will be tested
 
 1.  The average number of churn for Female customers is greater than or equal to that of Male customers.
@@ -92,9 +121,6 @@ def background():
 7.  The average number of churn for customers that have **Yes** values for **seniorCitizen** is greater than or equal to those with **No** values.
                 """)
         
-    st.write('#### Feedback')
-    st.write(' Contact us on info@customerpredict.com for more enquiry' )
-
 with open('.streamlit/config.yaml') as file:
     config = yaml.load(file, Loader=SafeLoader)
 
