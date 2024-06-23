@@ -9,6 +9,11 @@ st.set_page_config(
     layout='wide'
 )
 
+<<<<<<< Updated upstream
+=======
+with open('pages\01_📑_Data.py') as file:
+    config = yaml.load(file, Loader=SafeLoader)
+>>>>>>> Stashed changes
 
 
 st.title('Telco Customer Churn Data 🗃')
