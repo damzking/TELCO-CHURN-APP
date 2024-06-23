@@ -2,6 +2,10 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+import streamlit_authenticator as stauth
+import yaml
+from yaml.loader import SafeLoader
+
 
 st.set_page_config(
     page_title='Data Page',
@@ -9,11 +13,8 @@ st.set_page_config(
     layout='wide'
 )
 
-<<<<<<< Updated upstream
-=======
 with open('pages\01_📑_Data.py') as file:
     config = yaml.load(file, Loader=SafeLoader)
->>>>>>> Stashed changes
 
 
 st.title('Telco Customer Churn Data 🗃')

@@ -9,7 +9,9 @@ from catboost import CatBoostClassifier
 from xgboost import XGBClassifier
 import os
 import datetime
-
+import streamlit_authenticator as stauth
+import yaml
+from yaml.loader import SafeLoader
 
 
 st.set_page_config(
@@ -19,11 +21,16 @@ st.set_page_config(
 )
 
 
+with open('.streamlit/config.yaml') as file:
+    config = yaml.load(file, Loader=SafeLoader)
 
-
-
-
-st.title('Predict Telco Customer Churn')
+authenticator = stauth.Authenticate(
+    config['credentials'],
+    config['cookie']['name'],
+    config['cookie']['key'],
+    config['cookie']['expiry_days'],
+    config['pre-authorized']
+)
 
 
 st.cache_resource()
@@ -95,6 +102,7 @@ def make_prediction(pipeline, encoder):
     data = [[gender, SeniorCitizen, Partner, Dependents, tenure, PhoneService, MultipleLines, InternetService, OnlineSecurity, OnlineBackup, DeviceProtection, TechSupport, StreamingTV, StreamingMovies, Contract, PaperlessBilling, PaymentMethod, MonthlyCharges, TotalCharges]]
     columns = ['gender', 'SeniorCitizen', 'Partner', 'Dependents', 'tenure', 'PhoneService', 'MultipleLines', 'InternetService', 'OnlineSecurity', 'OnlineBackup', 'DeviceProtection', 'TechSupport', 'StreamingTV', 'StreamingMovies', 'Contract', 'PaperlessBilling', 'PaymentMethod', 'MonthlyCharges', 'TotalCharges']
     df = pd.DataFrame(data, columns=columns)
+    
     pred = pipeline.predict(df)
     pred_int = int(pred[0])
     prediction = encoder.inverse_transform([pred_int])[0]
@@ -104,17 +112,18 @@ def make_prediction(pipeline, encoder):
     st.session_state['probability'] = probability
     
     # Save results
-    final_probability = round(probability[pred_int], 2)
+   
     df['prediction'] = prediction
-    df['probability'] = final_probability
+    if prediction == 'No':
+        df['Probability'] = st.session_state["probability"][0]
+    else:
+        df['Probability'] = st.session_state["probability"][1]
     
     df['model_used'] = st.session_state['selected_model']
 
-    history_file_path = './models/history.csv'
+    history_file_path = 'Data/history.csv'
     df.to_csv(history_file_path, mode='a', header=not os.path.exists(history_file_path), index=False)
 
-    
-    
     return prediction , probability
 
 
@@ -124,60 +133,75 @@ if 'prediction' not in st.session_state:
 if 'probability' not in st.session_state:
     st.session_state['probability'] = None 
 
-   
-
-
-
-
-
-
 def display_form():
     pipeline, encoder = select_model()
-    with st.form('my_form'):
+    with st.form('input_form'):
         col1, col2 = st.columns(2)
         with col1:
-            st.write('### Select/Input parameters :info:')
+            st.markdown('### Customer Infos')
             st.selectbox('Customer gender', options =['Male', 'Female'], key='gender')
             st.selectbox('Is Customer a SeniorCitizen', options =['Yes', 'No'], key='SeniorCitizen')
             st.selectbox('Does Customer have a partner?', options =['Yes', 'No'], key='Partner')
             st.selectbox('Does Customer have Dependents?', options =['Yes', 'No'], key='Dependents')
             st.number_input('tenure', key='tenure', min_value=0, step=1)
+        
+        with col2:
+            st.write('### Telco Services')
             st.selectbox('Does Telco provide Phone Service', options =['Yes', 'No'], key='PhoneService')
             st.selectbox('Does Customer have Multiple Lines', options =['Yes', 'No'], key='MultipleLines')
             st.selectbox('Which type of Internet Service', options =['DSL', 'Fiber optic'], key='InternetService')
             st.selectbox('Does Telco provide Online Security', options =['Yes', 'No'], key='OnlineSecurity')
             st.selectbox('Does Telco provide Online Backup', options =['Yes', 'No'], key='OnlineBackup', )
-        with col2:
-            st.write('### ....')  
-            st.selectbox('Does Telco provide Device Protection', options =['Yes', 'No'], key='DeviceProtection')
-            st.selectbox('Does Telco provide Tech Support', options =['Yes', 'No'], key='TechSupport')
-            st.selectbox('Does Telco provide Streaming TV', options =['Yes', 'No'], key='StreamingTV')
-            st.selectbox('Does Telco provide Streaming Movies', options =['Yes', 'No'], key='StreamingMovies')
+        
+        col3, col4 = st.columns(2)
+        
+        with col3:
+            st.write('### Contracts & Charges')    
             st.selectbox('Which type of Contract', options =['Month-to-month', 'One year', 'Two year'], key='Contract')
             st.selectbox('Paperless Billing', options =['Yes', 'No'], key='PaperlessBilling')
             st.selectbox('Payment Method', options =['Electronic check', 'Mailed check', 'Bank transfer (automatic)', 'Credit card (automatic)'], key='PaymentMethod')
             st.number_input('Monthly Charges', key='MonthlyCharges')
             st.number_input('Total Charges', key='TotalCharges')
-        st.form_submit_button('Predict', on_click=make_prediction, kwargs=dict(pipeline=pipeline, encoder=encoder)) 
+        
+        
+        with col4:
+            #st.write('### Telco services cont..')  
+            st.selectbox('Does Telco provide Device Protection', options =['Yes', 'No'], key='DeviceProtection')
+            st.selectbox('Does Telco provide Tech Support', options =['Yes', 'No'], key='TechSupport')
+            st.selectbox('Does Telco provide Streaming TV', options =['Yes', 'No'], key='StreamingTV')
+            st.selectbox('Does Telco provide Streaming Movies', options =['Yes', 'No'], key='StreamingMovies')
+        st.form_submit_button('Submit', on_click=make_prediction, kwargs=dict(pipeline=pipeline, encoder=encoder)) #st.form_submit_button('Predict', on_click=make_prediction, kwargs=dict(pipeline=pipeline, encoder=encoder)) 
 
 
-#warnings = []  # List to store warning messages
+if st.session_state['authentication_status']:    
+    authenticator.logout(location='sidebar')
+    col1, col2 = st.columns(2)
+    with col1:
+        st.image('resources/churn image.png', width=200)
+    with col2:
+        st.header(':rainbow-background[Will customer Churn?]')
 
-#for key, option in st.session_state.items():
-#    if option is None:
-#       warning = f"Please enter {key}."
-#       warnings.append(warning)
-#       st.warning(warning)
-    
-
-
-if __name__ == '__main__':
-    
     display_form()
     
-
-    
-    if not st.session_state['prediction']:
+    final_prediction = st.session_state['prediction']
+    if not final_prediction:
         st.write('### Prediction show here')
+        
     else:
+        col1, col2 = st.columns(2)
 
+        with col1:
+            if final_prediction == "Yes":
+                st.write("### Churned? :red[Yes]\nCustomer is likely to churn")
+            else: 
+                st.write(f'### Churned? :green[No]\nCustomer is not likely to churn')     
+        with col2:
+            st.subheader('@ What Probability?')
+            if final_prediction == 'No':
+                st.write(f'#### :green[{round((st.session_state["probability"][0]*100),2)}%] chance of customer not churning.')
+            else:
+                st.write(f'#### :red[{round((st.session_state["probability"][1]*100),2)}%] chance of customer churning.')
+
+
+else:
+    st.info('Login to gain access to the app')
