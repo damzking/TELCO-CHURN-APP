@@ -78,45 +78,52 @@ def app():
         if not st.session_state.signedout:
             col3, col4 = st.columns(2)
             with col3:
-                login = st.button('Login', key='login_button', on_click=sign_in)
+                def login_form():
+                    email_address = st.text_input('Email Address')
+                    password = st.text_input('Password', type='password')
+                    st.form_submit_button('Login', on_click=login_button)
             with col4:
-                signup = st.button('SignUp', key='signup_button', on_click=sign_up)
+                def signup_form():
+                    username = st.text_input('Username')
+                    password = st.text_input('Password', type='password')
+                    email_address = st.text_input('Email Address')
+                    st.form_submit_button('Sign Up', on_click=signup_button)
             
-                if login == 'Login':
-                    with st.form("login_form"):
-                        email_address = st.text_input('Email Address')
-                        password = st.text_input('Password', type='password')
-                        login_button = st.form_submit_button('Login')
+                #if login == 'Login':
+                    #with st.form("login_form"):
+                     #   email_address = st.text_input('Email Address')
+                     #   password = st.text_input('Password', type='password')
+                     #   login_button = st.form_submit_button('Login')
  
-                    if login_button:
-                        try:
-                            user = auth.get_user_by_email(email_address)
-                            st.write('Login Successfully')
-                            st.session_state.username = user.uid
-                            st.session_state.useremail = user.email
-                            st.session_state.signedout = True
-                            st.session_state.sign_in = True
-                        except Exception as e:
-                            if st.session_state.useremail != user.email:
-                                st.warning('Invalid email')
-                            else:
-                                st.warning('Invalid password')
+                def login_button():
+                    try:
+                        user = auth.get_user_by_email(email_address)
+                        st.write('Login Successfully')
+                        st.session_state.username = user.uid
+                        st.session_state.useremail = user.email
+                        st.session_state.signedout = True
+                        st.session_state.sign_in = True
+                    except Exception as e:
+                        if st.session_state.useremail != user.email:
+                            st.warning('Invalid email')
+                        else:
+                            st.warning('Invalid password')
  
-                if signup == 'SignUp':
-                    with st.form("signup_form"):
-                        username = st.text_input('Username')
-                        password = st.text_input('Password', type='password')
-                        email_address = st.text_input('Email Address')
-                        signup_button = st.form_submit_button('SignUp')
+                #if signup == 'SignUp':
+                 #   with st.form("signup_form"):
+                  #      username = st.text_input('Username')
+                   #     password = st.text_input('Password', type='password')
+                    #    email_address = st.text_input('Email Address')
+                     #   signup_button = st.form_submit_button('SignUp')
 
-                    if signup_button:
-                        try:
-                            user = auth.create_user(email=email_address, password=password, uid=username)
-                            st.success(f'Signed up as {username}')
-                            st.markdown('Please Login using your email and password')
-                            st.balloons()
-                        except Exception as e:
-                            st.warning('Please enter a valid email address')
+                def signup_button():
+                    try:
+                        user = auth.create_user(email=email_address, password=password, uid=username)
+                        st.success(f'Signed up as {username}')
+                        st.markdown('Please Login using your email and password')
+                        st.balloons()
+                    except Exception as e:
+                        st.warning('Please enter a valid email address')
                         
         else:
             st.text('Name: ' + st.session_state.username)
