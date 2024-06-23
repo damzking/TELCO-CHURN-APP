@@ -157,11 +157,11 @@ if st.session_state['authentication_status']:
                     except Exception as e:
                         st.error(e)
                 else:
-                    st.error('Passwords do not match')
+                    st.error('Passwords do not match 😕')
     background()
 
 elif st.session_state['authentication_status'] is False:
-    st.info('Invalid Email/Password')
+    st.info('Invalid Email/Password 😕')
 
 elif st.session_state['authentication_status'] is None:
     st.info('Please use test account below to get access to the app')
