@@ -3,8 +3,7 @@
 /.lp4env
 /.lp4env/.lp4env\Lib\site-packages
 /.streamlit/secrets.toml
-<<<<<<< HEAD
-/__pycache__
-=======
 /.streamlit/telco-customer-churn-predict-f7f9ee24bfdc.json
->>>>>>> 87cf82efc0c614d1d90e77d29c808e10c66f931a
+/__pycache__
+/.DS_Store
+/config.yaml
