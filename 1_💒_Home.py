@@ -50,10 +50,10 @@ def background():
                         - For Collaboration on a different project
                         - For feedback and Enquiry
                         
-                        email me via victor.nyarko@ymail.com
+                        email me via alukodami@ymail.com
                         """)
                 st.caption('For more information about me, checkout my!')
-                st.write(':red[[GitHub](https://github.com/Koanim/LP4-Telco-Customer-Churn-Prediction-APP), [LinkdIn](https://www.linkedin.com/in/victor-anim-83115818/), [Medium]()] pages')
+                st.write(':red[[GitHub](https://github.com/Koanim/LP4-Telco-Customer-Churn-Prediction-APP), [LinkdIn](https://www.linkedin.com/in/oluwadamilola-aluko/), [Medium]()] pages')
                 
         with col2:                    
             st.write('#### :rainbow[ Telco Churn Overview]')
